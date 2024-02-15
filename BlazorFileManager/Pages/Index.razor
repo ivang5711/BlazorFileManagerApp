@@ -4,6 +4,7 @@
 
 @using BlazorFileManager.Data
 @inject WeatherForecastService ForecastService
+@inject FileManager _fileManager
 
 @if (forecasts == null)
 {
@@ -11,6 +12,8 @@
 }
 else
 {
+
+    <p>File manager says: @res | @size</p>
 
 <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
     <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
@@ -23,7 +26,7 @@ else
             <RadzenSplitter>
                 <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
                     <RadzenDataGrid Data="@forecasts" TItem="WeatherForecast"
-                                    AllowVirtualization="true" Style="height:100vh" GridLines="DataGridGridLines.Vertical"
+                                    AllowVirtualization="true" Style="height:88vh" GridLines="DataGridGridLines.Vertical"
                                     AllowSorting="true" AllowColumnResize="true">
                         <Columns>
                             <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Name">
@@ -53,10 +56,16 @@ else
 
 @code {
     private WeatherForecast[]? forecasts;
+    private string res = string.Empty;
+    private string size = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+        var drive = _fileManager.GetAllDrives().First();
+        res = drive.Name;
+        size = drive.TotalSize.ToString();
+
     }
 }
 

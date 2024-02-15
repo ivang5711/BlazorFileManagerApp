@@ -1,4 +1,5 @@
 using BlazorFileManager.Data;
+using BlazorFileManager.Services;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using Radzen;
@@ -10,6 +11,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddRadzenComponents();
+builder.Services.AddSingleton<FileManager>();
 
 var app = builder.Build();
 
