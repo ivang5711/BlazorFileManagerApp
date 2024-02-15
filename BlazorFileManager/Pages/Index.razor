@@ -1,9 +1,62 @@
 ﻿@page "/"
 
-<PageTitle>Index</PageTitle>
+<PageTitle>Blazor File Manager</PageTitle>
 
-<h1>Hello, world!</h1>
+@using BlazorFileManager.Data
+@inject WeatherForecastService ForecastService
 
-Welcome to your new app.
+@if (forecasts == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
 
-<SurveyPrompt Title="How is Blazor working for you?" />
+<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
+    <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+    <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder" Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
+</RadzenStack>
+
+
+    <RadzenSplitter Orientation="Orientation.Vertical" style="height: 88vh; border: 1px solid rgba(0,0,0,.08);">
+        <RadzenSplitterPane Size="100px">
+            <RadzenSplitter>
+                <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
+                    <RadzenDataGrid Data="@forecasts" TItem="WeatherForecast"
+                                    AllowVirtualization="true" Style="height:100vh" GridLines="DataGridGridLines.Vertical"
+                                    AllowSorting="true" AllowColumnResize="true">
+                        <Columns>
+                            <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Name">
+                                <Template Context="forecast">
+                                    @forecast.Date.ToShortDateString() sijehfihl ihe lkikih ki oh kih sd s sgfsgsg sg sgsdg sg ssdg sgsgs
+                                </Template>
+                            </RadzenDataGridColumn>
+                            <RadzenDataGridColumn TItem="WeatherForecast"
+                                                  Property="TemperatureC" Title="Ext" MinWidth="10%" Width="10%" />
+                            <RadzenDataGridColumn TItem="WeatherForecast"
+                                                  Property="TemperatureF" Title="Size" MinWidth="10%" Width="10%" />
+                            <RadzenDataGridColumn TItem="WeatherForecast"
+                                                  Property="Summary" Title="Date" MinWidth="10%" Width="10%" />
+                        </Columns>
+                    </RadzenDataGrid>
+                </RadzenSplitterPane>
+                <RadzenSplitterPane>
+                    Preview
+                    <div style="font-size: 10px;">
+                        50% Min 30px Max 70%
+                    </div>
+                </RadzenSplitterPane>
+            </RadzenSplitter>
+        </RadzenSplitterPane>
+    </RadzenSplitter>
+}
+
+@code {
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
+    }
+}
+
