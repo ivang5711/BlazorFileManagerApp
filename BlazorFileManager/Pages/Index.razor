@@ -14,7 +14,6 @@
 }
 else
 {
-
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" 
                  Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
         <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" 
@@ -22,7 +21,6 @@ else
         <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder" 
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
     </RadzenStack>
-
 
     <RadzenSplitter Orientation="Orientation.Vertical" style="height: 88vh; border: 1px solid rgba(0,0,0,.08);">
         <RadzenSplitterPane Size="100px">
