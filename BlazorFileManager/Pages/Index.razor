@@ -2,44 +2,49 @@
 
 <PageTitle>Blazor File Manager</PageTitle>
 
+@using Humanizer
+@using ByteSizeLib
 @using BlazorFileManager.Data
 @inject WeatherForecastService ForecastService
 @inject FileManager _fileManager
 
-@if (forecasts == null)
+@if (_items == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
 
-    <p>File manager says: @res | @size</p>
-
-<RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
-    <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
-    <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder" Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
-</RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" 
+                 Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
+        <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" 
+                      Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
+        <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder" 
+                      Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
+    </RadzenStack>
 
 
     <RadzenSplitter Orientation="Orientation.Vertical" style="height: 88vh; border: 1px solid rgba(0,0,0,.08);">
         <RadzenSplitterPane Size="100px">
             <RadzenSplitter>
                 <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
-                    <RadzenDataGrid Data="@forecasts" TItem="WeatherForecast"
-                                    AllowVirtualization="true" Style="height:88vh" GridLines="DataGridGridLines.Vertical"
-                                    AllowSorting="true" AllowColumnResize="true">
+                    <RadzenDataGrid Data="@_items" TItem="FileSystemDisplayItem"
+                                    AllowVirtualization="true" Style="height:88vh" 
+                                    GridLines="DataGridGridLines.Vertical"
+                                    AllowSorting="true" AllowColumnResize="true"
+                                    CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick">
                         <Columns>
-                            <RadzenDataGridColumn TItem="WeatherForecast" Property="Date" Title="Name">
-                                <Template Context="forecast">
-                                    @forecast.Date.ToShortDateString() sijehfihl ihe lkikih ki oh kih sd s sgfsgsg sg sgsdg sg ssdg sgsgs
+                            <RadzenDataGridColumn TItem="FileSystemDisplayItem" Property="Name" Title="Name">
+                                <Template Context="item">
+                                    @item.Name
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="WeatherForecast"
-                                                  Property="TemperatureC" Title="Ext" MinWidth="10%" Width="10%" />
-                            <RadzenDataGridColumn TItem="WeatherForecast"
-                                                  Property="TemperatureF" Title="Size" MinWidth="10%" Width="10%" />
-                            <RadzenDataGridColumn TItem="WeatherForecast"
-                                                  Property="Summary" Title="Date" MinWidth="10%" Width="10%" />
+                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                                                  Property="Extension" Title="Ext" MinWidth="10%" Width="10%" />
+                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                                                  Property="Size" Title="Size" MinWidth="10%" Width="10%" />
+                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                                                  Property="ModifiedDate" Title="Date" Width="20%" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenSplitterPane>
@@ -52,20 +57,5 @@ else
             </RadzenSplitter>
         </RadzenSplitterPane>
     </RadzenSplitter>
-}
-
-@code {
-    private WeatherForecast[]? forecasts;
-    private string res = string.Empty;
-    private string size = string.Empty;
-
-    protected override async Task OnInitializedAsync()
-    {
-        forecasts = await ForecastService.GetForecastAsync(DateTime.Now);
-        var drive = _fileManager.GetAllDrives().First();
-        res = drive.Name;
-        size = drive.TotalSize.ToString();
-
-    }
 }
 
