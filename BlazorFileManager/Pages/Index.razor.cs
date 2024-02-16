@@ -1,56 +1,62 @@
 using BlazorFileManager.Models;
+using Microsoft.JSInterop;
 using Radzen;
 using Radzen.Blazor;
+using Radzen.Blazor.Rendering;
+using System;
 
 namespace BlazorFileManager.Pages;
 
 public partial class Index
 {
+    public string? NewDirectoryName { get; set; }
     private List<FileSystemItemViewModel>? _items;
     private CurrentFolderViewModel? _currentFolder;
     private readonly string type = "Click";
-    private readonly bool multiple = true;
-    private string? _errorMessage = null;
+    private bool isFolderSelected = false;
+    private string? _errorMessage = string.Empty;
     private readonly IList<Tuple<FileSystemItemViewModel,
         RadzenDataGridColumn<FileSystemItemViewModel>>> selectedCellData =
             new List<Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>>();
+    private RadzenButton button;
+    private RadzenButton button2;
+    private Popup popup;
+    private Popup popup2;
+    private bool _deleteFolderWithContents;
 
     protected override async Task OnInitializedAsync()
     {
+        var y = selectedCellData.Any();
+        NewDirectoryName = null;
         _items = new();
         _currentFolder = new();
         AddAllDrivesToDisplayModel();
     }
 
-    private void CreateNewFolder()
+    private void CreateNewFolder(string newDirectoryName)
     {
-        var p = _items[^1];
-        var yo = p.Parent;
-        var re = Path.Combine(yo, "abc77");
-        _fileManager.CreateFolder(re);
+        var newFolder = System.IO.Path
+            .Combine(_currentFolder.FullPath, newDirectoryName);
+        _fileManager.CreateFolder(newFolder);
         Console.WriteLine("New folder created!");
-        GoToSubFolder(_items[^1].Parent);
+        GoToSubFolder(_currentFolder.FullPath);
     }
 
     private void DeleteFolder()
     {
-        Console.WriteLine("A folder deleted!");
+        _errorMessage = _fileManager
+            .DeleteFolder(selectedCellData.First().Item1.FullName, _deleteFolderWithContents);
     }
-
 
     private void Select(DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
-        if (!multiple)
-        {
-            selectedCellData.Clear();
-        }
-
         var cellData = selectedCellData.FirstOrDefault(
             i => i.Item1 == args.Data && i.Item2 == args.Column);
         if (cellData != null)
         {
-            selectedCellData.Remove(cellData);
+            selectedCellData.RemoveAt(0);
+            isFolderSelected = false;
         }
         else
         {
@@ -58,6 +64,12 @@ public partial class Index
                 new Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>(
                     args.Data, args.Column));
+            if (selectedCellData.Count > 1)
+            {
+                selectedCellData.RemoveAt(0);
+            }
+
+            isFolderSelected = true;
         }
     }
 
@@ -127,9 +139,9 @@ public partial class Index
         _items.Add(CreateParentItem(temp));
         _currentFolder = new CurrentFolderViewModel()
         {
-            Name = _items[0].Name,
-            FullPath = _items[0].FullName,
-            Parent = _items[0].Parent,
+            Name = path,
+            FullPath = path,
+            Parent = temp,
             IsRoot = false,
         };
         AddAllFoldersToDisplayModel(directories);
@@ -185,5 +197,60 @@ public partial class Index
             Extension = string.Empty,
             Size = 0,
         };
+    }
+
+    private async Task OnOpen()
+    {
+        await JSRuntime.InvokeVoidAsync(
+            "eval",
+            "setTimeout(function(){ document.getElementById('search').focus(); }, 200)");
+    }
+
+    private async Task OnOpen2()
+    {
+        await JSRuntime.InvokeVoidAsync(
+            "eval",
+            "setTimeout(function(){ document.getElementById('search').focus(); }, 200)");
+    }
+
+    private async Task CloseCreateDirectoryDialog()
+    {
+        await popup.CloseAsync();
+    }
+
+    private async Task CloseDeleteDirectoryDialog()
+    {
+        await popup2.CloseAsync();
+    }
+
+    private void CreateNewDirectory()
+    {
+        CreateNewFolder(NewDirectoryName);
+        NewDirectoryName = null;
+        CloseCreateDirectoryDialog();
+    }
+
+    private void ConfirmDeleteDirectory()
+    {
+        DeleteFolder();
+        CloseDeleteDirectoryDialog();
+        GoToSubFolder(_currentFolder.FullPath);
+    }
+
+    private void OnCellRender(DataGridCellRenderEventArgs<FileSystemItemViewModel> args)
+    {
+        if (selectedCellData
+            .Any(i => i.Item1 == args.Data && i.Item2 == args.Column))
+        {
+            args.Attributes.Add("style",
+                $"background-color: var(--rz-secondary-lighter);");
+        }
+    }
+
+    void OnChange3(bool? value, string name)
+    {
+        //console.Log($"{name} value changed to {value}");
+
+        Console.WriteLine($"Swithch changed to: {_deleteFolderWithContents}");
     }
 }

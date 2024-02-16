@@ -54,11 +54,11 @@ namespace FileManagerApplication.Services
             return string.Empty;
         }
 
-        public string DeleteFolder(string path)
+        public string DeleteFolder(string path, bool deleteWithContents)
         {
             try
             {
-                Directory.Delete(path);
+                Directory.Delete(path, deleteWithContents);
             }
             catch(Exception ex)
             {

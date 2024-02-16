@@ -1,11 +1,13 @@
 ﻿@page "/"
 
-<PageTitle>Blazor File Manager</PageTitle>
-
+@using Radzen.Blazor.Rendering
 @using Humanizer
 @using ByteSizeLib
+@inject IJSRuntime JSRuntime
 @inject FileManager _fileManager
 @inject DialogService DialogService
+
+<PageTitle>Blazor File Manager</PageTitle>
 
 @if (_items == null)
 {
@@ -13,32 +15,60 @@
 }
 else
 {
-
-
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
-                 Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
-        <RadzenButton Click=@(() => CreateNewFolder()) Text="Add New Folder"
-                      Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
-        <RadzenButton Click=@(args => DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" })) Text="Delete Folder"
-                      Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
-        @if (_errorMessage is not null)
+                 Gap="1rem" Wrap="FlexWrap.Wrap" class="my-2" Style="height: 5vh">
+        <RadzenButton Text="Add New Folder" @ref=button Click="@(args => popup.ToggleAsync(button.Element))"
+                      Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Disabled="_currentFolder.IsRoot" />
+
+        <RadzenButton Text="Delete Folder" @ref=button2 Click="@(args => popup2.ToggleAsync(button2.Element))"
+                      Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" Disabled="@(!isFolderSelected || _currentFolder.IsRoot || selectedCellData.Any(x => x.Item1.Name == ".."))" />
+        @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
                          Shade="Shade.Lighter" Size="AlertSize.ExtraSmall" AllowClose=true>
                 @_errorMessage
             </RadzenAlert>
         }
+
     </RadzenStack>
 
-    <RadzenSplitter Orientation="Orientation.Vertical" style="height: 88vh; border: 1px solid rgba(0,0,0,.08);">
+    <Popup @ref=popup Lazy=false Open="@OnOpen"
+           Style="display:none;position:absolute;height:auto;width:38%;">
+        <RadzenCard>
+            <RadzenTextBox Placeholder="Enter new directory name..." class="w-100 mb-2" aria-label="TextBox with placeholder" @bind-Value="@NewDirectoryName" />
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
+                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" Click=@CloseCreateDirectoryDialog />
+                <RadzenButton Variant="Variant.Text" Icon="add_circle_outline" Text="Create" Click=@CreateNewDirectory />
+            </RadzenStack>
+        </RadzenCard>
+    </Popup>
+
+    <Popup @ref=popup2 Lazy=false Open="@OnOpen2"
+           Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
+        <RadzenCard>
+            <h3>Are you sure?</h3>
+            <RadzenIcon Icon="warning" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
+            <p>Recursive deletion (deletes all files and folders within the folder): </p>
+            <RadzenSwitch @bind-Value=@_deleteFolderWithContents Change=@(args => OnChange3(args, "Switch")) InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})" />
+
+            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
+                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" Click=@CloseDeleteDirectoryDialog />
+                <RadzenButton Variant="Variant.Text" Text="Delete" Click=@ConfirmDeleteDirectory />
+            </RadzenStack>
+        </RadzenCard>
+    </Popup>
+
+    <RadzenSplitter Orientation="Orientation.Vertical" style="height: 85vh; border: 1px solid rgba(0,0,0,.08);">
         <RadzenSplitterPane Size="100px">
             <RadzenSplitter>
                 <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
                     <RadzenDataGrid Data="@_currentFolder.InnerItems" TItem="FileSystemItemViewModel"
-                                    AllowVirtualization="true" Style="height:88vh"
+                                    AllowVirtualization="true" Style="height:85vh"
                                     GridLines="DataGridGridLines.Vertical"
                                     AllowSorting="true" AllowColumnResize="true"
-                                    CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick">
+                                    AllowRowSelectOnRowClick="true"
+                                    CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick"
+                                    CellRender="OnCellRender">
                         <Columns>
                             <RadzenDataGridColumn TItem="FileSystemItemViewModel" Property="Name" Title="Name">
                                 <Template Context="item">
@@ -63,5 +93,6 @@ else
             </RadzenSplitter>
         </RadzenSplitterPane>
     </RadzenSplitter>
+    <RadzenTextBox Disabled="true" Placeholder="@_currentFolder.FullPath" class="w-100 mt-1" Style="height: 3vh;" aria-label="Disabled TextBox" />
 }
 
