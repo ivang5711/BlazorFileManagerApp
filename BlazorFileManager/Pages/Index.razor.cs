@@ -1,4 +1,3 @@
-using BlazorFileManager.Data;
 using BlazorFileManager.Models;
 using Radzen;
 using Radzen.Blazor;
@@ -92,7 +91,7 @@ public partial class Index
         {
             directories = dirInfo.GetDirectories();
         }
-        catch (UnauthorizedAccessException ex) 
+        catch (UnauthorizedAccessException ex)
         {
             _errorMessage = "You do not have permission to access this folder";
             Console.WriteLine(ex);
