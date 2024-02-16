@@ -14,12 +14,21 @@
 }
 else
 {
-    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" 
+
+
+    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
                  Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
-        <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder" 
+        <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder"
                       Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
-        <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder" 
+        <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
+        @if (_errorMessage is not null)
+        {
+            <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
+                         Shade="Shade.Lighter" Size="AlertSize.ExtraSmall" AllowClose=true>
+                @_errorMessage
+            </RadzenAlert>
+        }
     </RadzenStack>
 
     <RadzenSplitter Orientation="Orientation.Vertical" style="height: 88vh; border: 1px solid rgba(0,0,0,.08);">
@@ -27,7 +36,7 @@ else
             <RadzenSplitter>
                 <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
                     <RadzenDataGrid Data="@_items" TItem="FileSystemDisplayItem"
-                                    AllowVirtualization="true" Style="height:88vh" 
+                                    AllowVirtualization="true" Style="height:88vh"
                                     GridLines="DataGridGridLines.Vertical"
                                     AllowSorting="true" AllowColumnResize="true"
                                     CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick">

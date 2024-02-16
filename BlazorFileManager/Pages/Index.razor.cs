@@ -8,30 +8,20 @@ namespace BlazorFileManager.Pages;
 public partial class Index
 {
     private List<FileSystemDisplayItem>? _items;
+    private readonly string type = "Click";
+    private readonly bool multiple = true;
+    private string? _errorMessage = null;
+    private readonly IList<Tuple<FileSystemDisplayItem,
+        RadzenDataGridColumn<FileSystemDisplayItem>>> selectedCellData =
+            new List<Tuple<FileSystemDisplayItem,
+                RadzenDataGridColumn<FileSystemDisplayItem>>>();
 
     protected override async Task OnInitializedAsync()
     {
-        var drives = _fileManager.GetAllDrives().ToList();
         _items = new();
-        foreach (var drive in drives)
-        {
-            _items.Add(new FileSystemDisplayItem()
-            {
-                Name = drive.Name,
-                FullName = drive.Name,
-                Parent = string.Empty,
-                Extension = string.Empty,
-                Size = drive.TotalSize,
-            });
-        }
+        AddAllDrivesToDisplayModel();
     }
 
-    private readonly string type = "Click";
-    private readonly bool multiple = true;
-    private readonly IList<Tuple<FileSystemDisplayItem, 
-        RadzenDataGridColumn<FileSystemDisplayItem>>> selectedCellData = 
-            new List<Tuple<FileSystemDisplayItem, 
-                RadzenDataGridColumn<FileSystemDisplayItem>>>();
 
     private void Select(DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
     {
@@ -40,36 +30,41 @@ public partial class Index
             selectedCellData.Clear();
         }
 
-        var cellData = selectedCellData
-            .FirstOrDefault(i => i.Item1 == args.Data && i.Item2 == args.Column);
+        var cellData = selectedCellData.FirstOrDefault(
+            i => i.Item1 == args.Data && i.Item2 == args.Column);
         if (cellData != null)
         {
             selectedCellData.Remove(cellData);
         }
         else
         {
-            selectedCellData.Add(new Tuple<FileSystemDisplayItem, 
-                RadzenDataGridColumn<FileSystemDisplayItem>>(args.Data, args.Column));
+            selectedCellData.Add(
+                new Tuple<FileSystemDisplayItem,
+                RadzenDataGridColumn<FileSystemDisplayItem>>(
+                    args.Data, args.Column));
         }
     }
 
-    private void OnCellClick(DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
+    private void OnCellClick(
+        DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
     {
         if (type == "Click")
         {
             Select(args);
+            _errorMessage = null;
         }
     }
 
-    private void OnCellDoubleClick(DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
+    private void OnCellDoubleClick(
+        DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
     {
         if (type != "Click")
         {
             Select(args);
         }
 
-        var path = args.Data.FullName;
-        GoToSubFolder(path);
+        _errorMessage = null;
+        GoToSubFolder(args.Data.FullName);
     }
 
     private void GoToSubFolder(string path)
@@ -82,21 +77,31 @@ public partial class Index
         }
 
         var dirInfo = _fileManager.GetDirectoryInfo(path);
-        var folders = dirInfo.GetDirectories();
         var temp = dirInfo.Parent?.FullName;
         if (_items[0].FullName == path)
         {
-            _items = new();
             temp ??= string.Empty;
-            _items.Add(CreateParentItem(temp));
-            AddAllFoldersToDisplayModel(folders);
+        }
+        else
+        {
+            temp ??= dirInfo.Root.FullName;
+        }
+
+        DirectoryInfo[] directories;
+        try
+        {
+            directories = dirInfo.GetDirectories();
+        }
+        catch (UnauthorizedAccessException ex) 
+        {
+            _errorMessage = "You do not have permission to access this folder";
+            Console.WriteLine(ex);
             return;
         }
 
         _items = new();
-        temp ??= dirInfo.Root.FullName;
         _items.Add(CreateParentItem(temp));
-        AddAllFoldersToDisplayModel(folders);
+        AddAllFoldersToDisplayModel(directories);
     }
 
     private void AddAllFoldersToDisplayModel(DirectoryInfo[] folders)
