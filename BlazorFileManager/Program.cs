@@ -9,7 +9,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 builder.Services.AddRadzenComponents();
-builder.Services.AddSingleton<FileManager>();
+builder.Services.AddScoped<FileManager>();
 
 var app = builder.Build();
 
