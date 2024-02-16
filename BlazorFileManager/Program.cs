@@ -1,7 +1,5 @@
 using BlazorFileManager.Data;
-using BlazorFileManager.Services;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
+using FileManagerApplication.Services;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);

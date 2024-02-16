@@ -1,4 +1,7 @@
-﻿namespace BlazorFileManager.Services
+﻿using System.Collections.Generic;
+using System.IO;
+
+namespace FileManagerApplication.Services
 {
     public class FileManager
     {
@@ -21,7 +24,7 @@
 
         public List<FileInfo> GetAllDirectoryFilesInfo(IEnumerable<string> fileNames)
         {
-            List<FileInfo> result = new();
+            List<FileInfo> result = new List<FileInfo>();
             foreach (string fileName in fileNames)
             {
                 result.Add(new FileInfo(fileName));
