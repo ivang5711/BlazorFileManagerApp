@@ -5,6 +5,7 @@
 @using Humanizer
 @using ByteSizeLib
 @inject FileManager _fileManager
+@inject DialogService DialogService
 
 @if (_items == null)
 {
@@ -16,9 +17,9 @@ else
 
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
                  Gap="1rem" Wrap="FlexWrap.Wrap" class="mb-2" Style="height: 5vh">
-        <RadzenButton Click=@(() => Console.WriteLine("b1 click")) Text="Add New Folder"
+        <RadzenButton Click=@(() => CreateNewFolder()) Text="Add New Folder"
                       Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" />
-        <RadzenButton Click=@(() => Console.WriteLine("b2 click")) Text="Delete Folder"
+        <RadzenButton Click=@(args => DialogService.Confirm("Are you sure?", "MyTitle", new ConfirmOptions() { OkButtonText = "Yes", CancelButtonText = "No" })) Text="Delete Folder"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" />
         @if (_errorMessage is not null)
         {
@@ -33,22 +34,22 @@ else
         <RadzenSplitterPane Size="100px">
             <RadzenSplitter>
                 <RadzenSplitterPane Size="60%" Min="20%" Max="80%">
-                    <RadzenDataGrid Data="@_items" TItem="FileSystemDisplayItem"
+                    <RadzenDataGrid Data="@_currentFolder.InnerItems" TItem="FileSystemItemViewModel"
                                     AllowVirtualization="true" Style="height:88vh"
                                     GridLines="DataGridGridLines.Vertical"
                                     AllowSorting="true" AllowColumnResize="true"
                                     CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick">
                         <Columns>
-                            <RadzenDataGridColumn TItem="FileSystemDisplayItem" Property="Name" Title="Name">
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel" Property="Name" Title="Name">
                                 <Template Context="item">
                                     @item.Name
                                 </Template>
                             </RadzenDataGridColumn>
-                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel"
                                                   Property="Extension" Title="Ext" MinWidth="10%" Width="10%" />
-                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel"
                                                   Property="Size" Title="Size" MinWidth="10%" Width="10%" />
-                            <RadzenDataGridColumn TItem="FileSystemDisplayItem"
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel"
                                                   Property="ModifiedDate" Title="Date" Width="20%" />
                         </Columns>
                     </RadzenDataGrid>

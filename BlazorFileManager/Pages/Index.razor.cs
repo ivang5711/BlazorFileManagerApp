@@ -6,23 +6,40 @@ namespace BlazorFileManager.Pages;
 
 public partial class Index
 {
-    private List<FileSystemDisplayItem>? _items;
+    private List<FileSystemItemViewModel>? _items;
+    private CurrentFolderViewModel? _currentFolder;
     private readonly string type = "Click";
     private readonly bool multiple = true;
     private string? _errorMessage = null;
-    private readonly IList<Tuple<FileSystemDisplayItem,
-        RadzenDataGridColumn<FileSystemDisplayItem>>> selectedCellData =
-            new List<Tuple<FileSystemDisplayItem,
-                RadzenDataGridColumn<FileSystemDisplayItem>>>();
+    private readonly IList<Tuple<FileSystemItemViewModel,
+        RadzenDataGridColumn<FileSystemItemViewModel>>> selectedCellData =
+            new List<Tuple<FileSystemItemViewModel,
+                RadzenDataGridColumn<FileSystemItemViewModel>>>();
 
     protected override async Task OnInitializedAsync()
     {
         _items = new();
+        _currentFolder = new();
         AddAllDrivesToDisplayModel();
     }
 
+    private void CreateNewFolder()
+    {
+        var p = _items[^1];
+        var yo = p.Parent;
+        var re = Path.Combine(yo, "abc77");
+        _fileManager.CreateFolder(re);
+        Console.WriteLine("New folder created!");
+        GoToSubFolder(_items[^1].Parent);
+    }
 
-    private void Select(DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
+    private void DeleteFolder()
+    {
+        Console.WriteLine("A folder deleted!");
+    }
+
+
+    private void Select(DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
         if (!multiple)
         {
@@ -38,14 +55,14 @@ public partial class Index
         else
         {
             selectedCellData.Add(
-                new Tuple<FileSystemDisplayItem,
-                RadzenDataGridColumn<FileSystemDisplayItem>>(
+                new Tuple<FileSystemItemViewModel,
+                RadzenDataGridColumn<FileSystemItemViewModel>>(
                     args.Data, args.Column));
         }
     }
 
     private void OnCellClick(
-        DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
+        DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
         if (type == "Click")
         {
@@ -55,7 +72,7 @@ public partial class Index
     }
 
     private void OnCellDoubleClick(
-        DataGridCellMouseEventArgs<FileSystemDisplayItem> args)
+        DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
         if (type != "Click")
         {
@@ -71,6 +88,7 @@ public partial class Index
         if (string.IsNullOrWhiteSpace(path))
         {
             _items = new();
+            _currentFolder = new();
             AddAllDrivesToDisplayModel();
             return;
         }
@@ -93,13 +111,27 @@ public partial class Index
         }
         catch (UnauthorizedAccessException ex)
         {
-            _errorMessage = "You do not have permission to access this folder";
+            _errorMessage = "You do not have permission to access this directory";
+            Console.WriteLine(ex);
+            return;
+        }
+        catch (DirectoryNotFoundException ex)
+        {
+            _errorMessage = "Failed to access the requested directory";
             Console.WriteLine(ex);
             return;
         }
 
         _items = new();
+        _currentFolder = new();
         _items.Add(CreateParentItem(temp));
+        _currentFolder = new CurrentFolderViewModel()
+        {
+            Name = _items[0].Name,
+            FullPath = _items[0].FullName,
+            Parent = _items[0].Parent,
+            IsRoot = false,
+        };
         AddAllFoldersToDisplayModel(directories);
     }
 
@@ -107,7 +139,7 @@ public partial class Index
     {
         foreach (var folder in folders)
         {
-            _items.Add(new FileSystemDisplayItem()
+            _items.Add(new FileSystemItemViewModel()
             {
                 Name = folder.Name,
                 FullName = folder.FullName,
@@ -117,6 +149,8 @@ public partial class Index
                 ModifiedDate = folder.LastWriteTime
             });
         }
+
+        _currentFolder.InnerItems.AddRange(_items);
     }
 
     private void AddAllDrivesToDisplayModel()
@@ -124,7 +158,7 @@ public partial class Index
         var drives = _fileManager.GetAllDrives().ToList();
         foreach (var drive in drives)
         {
-            _items.Add(new FileSystemDisplayItem()
+            _items.Add(new FileSystemItemViewModel()
             {
                 Name = drive.Name,
                 FullName = drive.Name,
@@ -133,11 +167,17 @@ public partial class Index
                 Size = drive.TotalSize,
             });
         }
+
+        _currentFolder = new CurrentFolderViewModel()
+        {
+            IsRoot = true,
+        };
+        _currentFolder.InnerItems.AddRange(_items);
     }
 
-    private FileSystemDisplayItem CreateParentItem(string parent)
+    private FileSystemItemViewModel CreateParentItem(string parent)
     {
-        return new FileSystemDisplayItem()
+        return new FileSystemItemViewModel()
         {
             Name = "..",
             FullName = parent,

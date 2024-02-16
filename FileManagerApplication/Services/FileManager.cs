@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace FileManagerApplication.Services
@@ -36,6 +37,36 @@ namespace FileManagerApplication.Services
         public DirectoryInfo GetDirectoryInfo(string path)
         {
             return new DirectoryInfo(path);
+        }
+
+        public string CreateFolder(string path)
+        {
+            try
+            {
+                Directory.CreateDirectory(path);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return "An error occured while creating directory";
+            }
+
+            return string.Empty;
+        }
+
+        public string DeleteFolder(string path)
+        {
+            try
+            {
+                Directory.Delete(path);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                return "An error occured while deleting directory";
+            }
+
+            return string.Empty;
         }
     }
 }

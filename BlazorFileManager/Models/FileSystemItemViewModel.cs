@@ -1,6 +1,6 @@
 ﻿namespace BlazorFileManager.Models
 {
-    public class FileSystemDisplayItem
+    public class FileSystemItemViewModel
     {
         /// <summary>
         /// only item name
