@@ -2,6 +2,7 @@
 using FileManagerDomain.Exceptions;
 using FileManagerDomain.Interfaces;
 using FileManagerDomain.Models;
+using Humanizer;
 
 namespace BlazorFileManager.Services;
 
@@ -221,7 +222,7 @@ public class FileManagerClient : IFileManagerClient
                 FullName = drive.Name,
                 Parent = string.Empty,
                 Extension = string.Empty,
-                Size = drive.Size,
+                Size = drive.Size.Bytes().Humanize(),
             });
         }
 
@@ -296,7 +297,7 @@ public class FileManagerClient : IFileManagerClient
                 FullName = file.FullName,
                 Parent = string.Empty,
                 Extension = file.Extension,
-                Size = file.Size,
+                Size = file.Size.Bytes().Humanize(),
                 ModifiedDate = file.ModifiedDate
             });
         }
@@ -312,7 +313,7 @@ public class FileManagerClient : IFileManagerClient
             FullName = parent,
             Parent = parent,
             Extension = string.Empty,
-            Size = 0,
+            Size = string.Empty,
         };
     }
 }

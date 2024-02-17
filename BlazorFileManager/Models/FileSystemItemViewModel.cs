@@ -25,7 +25,7 @@
         /// <summary>
         /// size on disk in bytes
         /// </summary>
-        public long Size { get; set; }
+        public string Size { get; set; }
 
         /// <summary>
         /// last modified date
