@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FileManagerDomain.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -6,9 +7,25 @@ namespace FileManagerApplication.Services
 {
     public class FileManager
     {
-        public IEnumerable<DriveInfo> GetAllDrives()
+        //public IEnumerable<DriveInfo> GetAllDrives()
+        //{
+        //    return DriveInfo.GetDrives();
+        //}
+
+        public IEnumerable<DriveInformation> GetAllDrives()
         {
-            return DriveInfo.GetDrives();
+            List<DriveInformation> result = new List<DriveInformation>();
+            var drives = DriveInfo.GetDrives();
+            foreach (var drive in drives)
+            {
+                result.Add(new DriveInformation
+                {
+                    Name = drive.Name,
+                    Size = drive.TotalSize
+                });
+            }
+
+            return result;
         }
 
         public IEnumerable<string> GetAllDirectoryFoldersFullNames(string path)
@@ -60,7 +77,7 @@ namespace FileManagerApplication.Services
             {
                 Directory.Delete(path, deleteWithContents);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 return "An error occured while deleting directory";

@@ -9,7 +9,7 @@
 
 <PageTitle>Blazor File Manager</PageTitle>
 
-@if (_items == null)
+@if (_currentFolder is null || _items == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,7 +21,8 @@ else
                       Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Disabled="_currentFolder.IsRoot" />
 
         <RadzenButton Text="Delete Folder" @ref=button2 Click="@(args => popup2.ToggleAsync(button2.Element))"
-                      Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" Disabled="@(!isFolderSelected || _currentFolder.IsRoot || selectedCellData.Any(x => x.Item1.Name == ".."))" />
+                      Icon="delete_forever" ButtonStyle="ButtonStyle.Primary" 
+                      Disabled="@(!isFolderSelected || _currentFolder.IsRoot || selectedCellData.Any(x => x.Item1.Name == ".."))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
@@ -35,10 +36,13 @@ else
     <Popup @ref=popup Lazy=false Open="@OnOpen"
            Style="display:none;position:absolute;height:auto;width:38%;">
         <RadzenCard>
-            <RadzenTextBox Placeholder="Enter new directory name..." class="w-100 mb-2" aria-label="TextBox with placeholder" @bind-Value="@NewDirectoryName" />
+            <RadzenTextBox Placeholder="Enter new directory name..." class="w-100 mb-2" aria-label="TextBox with placeholder" 
+                           @bind-Value="@NewDirectoryName" />
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
-                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" Click=@CloseCreateDirectoryDialog />
-                <RadzenButton Variant="Variant.Text" Icon="add_circle_outline" Text="Create" Click=@CreateNewDirectory />
+                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" 
+                              Click=@CloseCreateDirectoryDialog />
+                <RadzenButton Variant="Variant.Text" Icon="add_circle_outline" Text="Create" 
+                              Click=@CreateNewDirectory />
             </RadzenStack>
         </RadzenCard>
     </Popup>
@@ -49,10 +53,12 @@ else
             <h3>Are you sure?</h3>
             <RadzenIcon Icon="warning" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
             <p>Recursive deletion (deletes all files and folders within the folder): </p>
-            <RadzenSwitch @bind-Value=@_deleteFolderWithContents Change=@(args => OnChange3(args, "Switch")) InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})" />
+            <RadzenSwitch @bind-Value=@_deleteFolderWithContents Change=@(args => OnChange3(args, "Switch")) 
+                          InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})" />
 
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
-                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" Click=@CloseDeleteDirectoryDialog />
+                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel" 
+                              Click=@CloseDeleteDirectoryDialog />
                 <RadzenButton Variant="Variant.Text" Text="Delete" Click=@ConfirmDeleteDirectory />
             </RadzenStack>
         </RadzenCard>
@@ -93,6 +99,8 @@ else
             </RadzenSplitter>
         </RadzenSplitterPane>
     </RadzenSplitter>
-    <RadzenTextBox Disabled="true" Placeholder="@_currentFolder.FullPath" class="w-100 mt-1" Style="height: 3vh;" aria-label="Disabled TextBox" />
+    <RadzenTextBox Disabled="true" 
+                   Placeholder="@_currentFolder.FullPath" class="w-100 mt-1" 
+                   Style="height: 3vh;" aria-label="Disabled TextBox" />
 }
 

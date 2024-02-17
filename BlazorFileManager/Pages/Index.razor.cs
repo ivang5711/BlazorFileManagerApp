@@ -3,7 +3,6 @@ using Microsoft.JSInterop;
 using Radzen;
 using Radzen.Blazor;
 using Radzen.Blazor.Rendering;
-using System;
 
 namespace BlazorFileManager.Pages;
 
@@ -15,10 +14,12 @@ public partial class Index
     private readonly string type = "Click";
     private bool isFolderSelected = false;
     private string? _errorMessage = string.Empty;
+
     private readonly IList<Tuple<FileSystemItemViewModel,
         RadzenDataGridColumn<FileSystemItemViewModel>>> selectedCellData =
             new List<Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>>();
+
     private RadzenButton button;
     private RadzenButton button2;
     private Popup popup;
@@ -167,7 +168,7 @@ public partial class Index
 
     private void AddAllDrivesToDisplayModel()
     {
-        var drives = _fileManager.GetAllDrives().ToList();
+        var drives = _fileManager.GetAllDrives();
         foreach (var drive in drives)
         {
             _items.Add(new FileSystemItemViewModel()
@@ -176,7 +177,7 @@ public partial class Index
                 FullName = drive.Name,
                 Parent = string.Empty,
                 Extension = string.Empty,
-                Size = drive.TotalSize,
+                Size = drive.Size,
             });
         }
 
@@ -247,10 +248,8 @@ public partial class Index
         }
     }
 
-    void OnChange3(bool? value, string name)
+    private void OnChange3(bool? value, string name)
     {
-        //console.Log($"{name} value changed to {value}");
-
         Console.WriteLine($"Swithch changed to: {_deleteFolderWithContents}");
     }
 }
