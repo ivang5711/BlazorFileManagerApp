@@ -10,7 +10,6 @@ namespace BlazorFileManager.Pages;
 public partial class Index
 {
     public string? NewDirectoryName { get; set; }
-    //private List<FileSystemItemViewModel>? _items;
     private CurrentFolderViewModel? _currentFolder;
     private readonly string type = "Click";
     private bool isFolderSelected = false;
@@ -31,7 +30,6 @@ public partial class Index
     {
         var y = selectedCellData.Any();
         NewDirectoryName = null;
-        //_items = new();
         _currentFolder = new();
         AddAllDrivesToDisplayModel();
     }
@@ -101,7 +99,6 @@ public partial class Index
     {
         if (string.IsNullOrWhiteSpace(path))
         {
-            //_items = new();
             _currentFolder = new();
             AddAllDrivesToDisplayModel();
             return;
@@ -119,6 +116,7 @@ public partial class Index
         }
 
         var directories = _fileManager.GetAllInnerDerictoriesInfo(path);
+        var files = _fileManager.GetAllInnerFilesInfo(path);
         //try
         //{
         //    directories = dirInfo.GetDirectories();
@@ -136,7 +134,6 @@ public partial class Index
         //    return;
         //}
 
-        //_items = new();
         _currentFolder = new();
         _currentFolder = new CurrentFolderViewModel()
         {
@@ -147,6 +144,7 @@ public partial class Index
         };
         _currentFolder.InnerItems.Add(CreateParentItem(temp));
         AddAllFoldersToDisplayModel(directories);
+        AddAllFilesToDisplayModel(files);
     }
 
     private void AddAllFoldersToDisplayModel(IEnumerable<DirectoryInformation> folders)
