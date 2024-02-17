@@ -91,10 +91,15 @@ else
                     </RadzenDataGrid>
                 </RadzenSplitterPane>
                 <RadzenSplitterPane>
-                    Preview
-                    <div style="font-size: 10px;">
-                        50% Min 30px Max 70%
-                    </div>
+                    <RadzenStack Class="rz-mx-auto rz-my-12 h-100">
+                        <RadzenText Visible="@(TextFileContents != string.Empty)" Style="white-space: pre-wrap" TextAlign="TextAlign.Left">@TextFileContents</RadzenText>
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Class="rz-mx-auto rz-my-12 h-100" >
+                            <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
+                            <RadzenIcon Icon="folder" Style="font-size: 10rem;" Visible="@(ViewMessage == "folder")" />
+                            <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
+                            <RadzenImage Path="@($"data:image/jpeg;base64,{base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="base64 image" Visible="@(base64Image != string.Empty)" />
+                        </RadzenStack>
+                    </RadzenStack>
                 </RadzenSplitterPane>
             </RadzenSplitter>
         </RadzenSplitterPane>

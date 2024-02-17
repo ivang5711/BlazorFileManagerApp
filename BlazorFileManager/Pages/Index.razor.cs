@@ -1,5 +1,6 @@
 using BlazorFileManager.Models;
 using FileManagerDomain.Exceptions;
+using Humanizer;
 using Microsoft.JSInterop;
 using Radzen;
 using Radzen.Blazor;
@@ -10,6 +11,9 @@ namespace BlazorFileManager.Pages;
 public partial class Index
 {
     public string? NewDirectoryName { get; set; }
+    public string base64Image = string.Empty;
+    public string TextFileContents = string.Empty;
+    public string ViewMessage { get; set; } = string.Empty;
     private RadzenButton _addNewFolder = new();
     private RadzenButton _deleteFolder = new();
     private bool _isFolderSelected = false;
@@ -144,6 +148,8 @@ public partial class Index
         {
             _errorMessage = ex.Message;
         }
+
+        ViewMessage = string.Empty;
     }
 
     private void DeleteDirectory()
@@ -181,12 +187,15 @@ public partial class Index
 
     private void Select(DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
+        TextFileContents = string.Empty;
+        base64Image = string.Empty;
         var cellData = _selectedCellData.FirstOrDefault(
             i => i.Item1 == args.Data && i.Item2 == args.Column);
         if (cellData != null)
         {
             _selectedCellData.RemoveAt(0);
             _isFolderSelected = false;
+            ViewMessage = string.Empty;
         }
         else
         {
@@ -200,6 +209,53 @@ public partial class Index
             }
 
             _isFolderSelected = true;
+            if(_currentFolder.IsRoot)
+            {
+                ViewMessage = "disk";
+                return;
+            }
+            ViewMessage = _selectedCellData[0].Item1.Extension == string.Empty ? "folder" : "file";
+
+            if(_selectedCellData[0].Item1.Extension == ".txt")
+            {
+                //read file and show
+                Console.WriteLine($"Text file path: {_selectedCellData[0].Item1.FullName}");
+                string[] text = System.IO.File.ReadAllLines(_selectedCellData[0].Item1.FullName, System.Text.Encoding.UTF8);
+                ViewMessage = string.Empty;
+                string result = string.Join("\n", text);
+                
+                TextFileContents = result;
+            }
+
+            if(_selectedCellData[0].Item1.Extension == ".bmp")
+            {
+                // open image and show
+                Console.WriteLine($"Image path: {_selectedCellData[0].Item1.FullName}");
+
+                byte[] imageArray = System.IO.File.ReadAllBytes(_selectedCellData[0].Item1.FullName);
+                ViewMessage = string.Empty;
+                base64Image = Convert.ToBase64String(imageArray);
+            }
+
+            if (_selectedCellData[0].Item1.Extension == ".jpg")
+            {
+                // open image and show
+                Console.WriteLine($"Image path: {_selectedCellData[0].Item1.FullName}");
+
+                byte[] imageArray = System.IO.File.ReadAllBytes(_selectedCellData[0].Item1.FullName);
+                ViewMessage = string.Empty;
+                base64Image = Convert.ToBase64String(imageArray);
+            }
+
+            if (_selectedCellData[0].Item1.Extension == ".png")
+            {
+                // open image and show
+                Console.WriteLine($"Image path: {_selectedCellData[0].Item1.FullName}");
+
+                byte[] imageArray = System.IO.File.ReadAllBytes(_selectedCellData[0].Item1.FullName);
+                ViewMessage = string.Empty;
+                base64Image = Convert.ToBase64String(imageArray);
+            }
         }
     }
 
