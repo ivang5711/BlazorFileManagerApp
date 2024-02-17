@@ -1,4 +1,5 @@
 using BlazorFileManager.Models;
+using FileManagerDomain.Models;
 using Microsoft.JSInterop;
 using Radzen;
 using Radzen.Blazor;
@@ -107,33 +108,33 @@ public partial class Index
         }
 
         var dirInfo = _fileManager.GetDirectoryInfo(path);
-        var temp = dirInfo.Parent?.FullName;
+        var temp = dirInfo.Parent;
         if (_items[0].FullName == path)
         {
             temp ??= string.Empty;
         }
         else
         {
-            temp ??= dirInfo.Root.FullName;
+            temp ??= dirInfo.Root;
         }
 
-        DirectoryInfo[] directories;
-        try
-        {
-            directories = dirInfo.GetDirectories();
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            _errorMessage = "You do not have permission to access this directory";
-            Console.WriteLine(ex);
-            return;
-        }
-        catch (DirectoryNotFoundException ex)
-        {
-            _errorMessage = "Failed to access the requested directory";
-            Console.WriteLine(ex);
-            return;
-        }
+        var directories = _fileManager.GetAllInnerDerictoriesInfo(path);
+        //try
+        //{
+        //    directories = dirInfo.GetDirectories();
+        //}
+        //catch (UnauthorizedAccessException ex)
+        //{
+        //    _errorMessage = "You do not have permission to access this directory";
+        //    Console.WriteLine(ex);
+        //    return;
+        //}
+        //catch (DirectoryNotFoundException ex)
+        //{
+        //    _errorMessage = "Failed to access the requested directory";
+        //    Console.WriteLine(ex);
+        //    return;
+        //}
 
         _items = new();
         _currentFolder = new();
@@ -148,7 +149,7 @@ public partial class Index
         AddAllFoldersToDisplayModel(directories);
     }
 
-    private void AddAllFoldersToDisplayModel(DirectoryInfo[] folders)
+    private void AddAllFoldersToDisplayModel(IEnumerable<DirectoryInformation> folders)
     {
         foreach (var folder in folders)
         {
@@ -156,10 +157,9 @@ public partial class Index
             {
                 Name = folder.Name,
                 FullName = folder.FullName,
-                Parent = folder.Parent!.FullName,
+                Parent = folder.Parent,
                 Extension = string.Empty,
-                Size = 0,
-                ModifiedDate = folder.LastWriteTime
+                ModifiedDate = folder.ModifiedDate
             });
         }
 

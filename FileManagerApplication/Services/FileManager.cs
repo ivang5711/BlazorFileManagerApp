@@ -7,11 +7,6 @@ namespace FileManagerApplication.Services
 {
     public class FileManager
     {
-        //public IEnumerable<DriveInfo> GetAllDrives()
-        //{
-        //    return DriveInfo.GetDrives();
-        //}
-
         public IEnumerable<DriveInformation> GetAllDrives()
         {
             List<DriveInformation> result = new List<DriveInformation>();
@@ -51,9 +46,62 @@ namespace FileManagerApplication.Services
             return result;
         }
 
-        public DirectoryInfo GetDirectoryInfo(string path)
+        //public DirectoryInfo GetDirectoryInfo(string path)
+        //{
+        //    return new DirectoryInfo(path);
+        //}
+
+        public DirectoryInformation GetDirectoryInfo(string path)
         {
-            return new DirectoryInfo(path);
+            var directory = new DirectoryInfo(path);
+            DirectoryInformation result = new DirectoryInformation
+            {
+                Name = directory.Name,
+                FullName = directory.FullName,
+                Parent = directory.Parent?.FullName ?? string.Empty,
+                Root = directory.Root.FullName,
+                ModifiedDate = directory.LastWriteTime
+            };
+
+            return result;
+        }
+
+        public IEnumerable<DirectoryInformation> GetAllInnerDerictoriesInfo(string directoryPath)
+        {
+            DirectoryInfo[] directories = new DirectoryInfo(directoryPath).GetDirectories();
+            List<DirectoryInformation> result = new List<DirectoryInformation>();
+            foreach (var d in directories)
+            {
+                result.Add(new DirectoryInformation()
+                {
+                    Name = d.Name,
+                    FullName = d.FullName,
+                    Parent = d.Parent.FullName,
+                    Root = d.Root.FullName,
+                    ModifiedDate = d.LastWriteTime,
+                });
+            }
+
+            return result;
+        }
+
+        public IEnumerable<FileInformation> GetAllInnerFilesInfo(string directoryPath)
+        {
+            FileInfo[] directories = new DirectoryInfo(directoryPath).GetFiles();
+            List<FileInformation> result = new List<FileInformation>();
+            foreach (var d in directories)
+            {
+                result.Add(new FileInformation()
+                {
+                    Name = d.Name,
+                    FullName = d.FullName,
+                    Extension = d.Extension,
+                    ModifiedDate = d.LastWriteTime,
+                    Size = d.Length,
+                });
+            }
+
+            return result;
         }
 
         public string CreateFolder(string path)
