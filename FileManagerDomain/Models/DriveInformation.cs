@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace FileManagerDomain.Models
+﻿namespace FileManagerDomain.Models
 {
     public class DriveInformation
     {

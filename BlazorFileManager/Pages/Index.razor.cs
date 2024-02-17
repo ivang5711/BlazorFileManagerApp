@@ -1,4 +1,5 @@
 using BlazorFileManager.Models;
+using FileManagerDomain.Exceptions;
 using FileManagerDomain.Models;
 using Microsoft.JSInterop;
 using Radzen;
@@ -20,15 +21,14 @@ public partial class Index
             new List<Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>>();
 
-    private RadzenButton button;
-    private RadzenButton button2;
-    private Popup popup;
-    private Popup popup2;
+    private RadzenButton? button;
+    private RadzenButton? button2;
+    private Popup? popup;
+    private Popup? popup2;
     private bool _deleteFolderWithContents;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        var y = selectedCellData.Any();
         NewDirectoryName = null;
         _currentFolder = new();
         AddAllDrivesToDisplayModel();
@@ -37,7 +37,7 @@ public partial class Index
     private void CreateNewFolder(string newDirectoryName)
     {
         var newFolder = System.IO.Path
-            .Combine(_currentFolder.FullPath, newDirectoryName);
+            .Combine(_currentFolder!.FullPath, newDirectoryName);
         _fileManager.CreateFolder(newFolder);
         Console.WriteLine("New folder created!");
         GoToSubFolder(_currentFolder.FullPath);
@@ -46,7 +46,7 @@ public partial class Index
     private void DeleteFolder()
     {
         _errorMessage = _fileManager
-            .DeleteFolder(selectedCellData.First().Item1.FullName, _deleteFolderWithContents);
+            .DeleteFolder(selectedCellData[0].Item1.FullName, _deleteFolderWithContents);
     }
 
     private void Select(DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
@@ -106,7 +106,7 @@ public partial class Index
 
         var dirInfo = _fileManager.GetDirectoryInfo(path);
         var temp = dirInfo.Parent;
-        if (_currentFolder.InnerItems[0].FullName == path)
+        if (_currentFolder!.InnerItems[0].FullName == path)
         {
             temp ??= string.Empty;
         }
@@ -117,23 +117,6 @@ public partial class Index
 
         var directories = _fileManager.GetAllInnerDerictoriesInfo(path);
         var files = _fileManager.GetAllInnerFilesInfo(path);
-        //try
-        //{
-        //    directories = dirInfo.GetDirectories();
-        //}
-        //catch (UnauthorizedAccessException ex)
-        //{
-        //    _errorMessage = "You do not have permission to access this directory";
-        //    Console.WriteLine(ex);
-        //    return;
-        //}
-        //catch (DirectoryNotFoundException ex)
-        //{
-        //    _errorMessage = "Failed to access the requested directory";
-        //    Console.WriteLine(ex);
-        //    return;
-        //}
-
         _currentFolder = new();
         _currentFolder = new CurrentFolderViewModel()
         {
@@ -162,7 +145,7 @@ public partial class Index
             });
         }
 
-        _currentFolder.InnerItems.AddRange(temp);
+        _currentFolder!.InnerItems.AddRange(temp);
     }
 
     private void AddAllFilesToDisplayModel(IEnumerable<FileInformation> files)
@@ -181,12 +164,29 @@ public partial class Index
             });
         }
 
-        _currentFolder.InnerItems.AddRange(temp);
+        _currentFolder!.InnerItems.AddRange(temp);
     }
 
     private void AddAllDrivesToDisplayModel()
     {
-        var drives = _fileManager.GetAllDrives();
+        IEnumerable<DriveInformation> drives;
+        try
+        {
+            drives = _fileManager.GetAllDrives();
+        }
+        catch (AccessDeniedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+
         List<FileSystemItemViewModel> temp = new();
         foreach (var drive in drives)
         {
@@ -235,26 +235,30 @@ public partial class Index
 
     private async Task CloseCreateDirectoryDialog()
     {
-        await popup.CloseAsync();
+        await popup!.CloseAsync();
     }
 
     private async Task CloseDeleteDirectoryDialog()
     {
-        await popup2.CloseAsync();
+        await popup2!.CloseAsync();
     }
 
-    private void CreateNewDirectory()
+    private async Task CreateNewDirectory()
     {
-        CreateNewFolder(NewDirectoryName);
+        if (!string.IsNullOrWhiteSpace(NewDirectoryName))
+        {
+            CreateNewFolder(NewDirectoryName!);
+        }
+
         NewDirectoryName = null;
-        CloseCreateDirectoryDialog();
+        await CloseCreateDirectoryDialog();
     }
 
-    private void ConfirmDeleteDirectory()
+    private async Task ConfirmDeleteDirectory()
     {
         DeleteFolder();
-        CloseDeleteDirectoryDialog();
-        GoToSubFolder(_currentFolder.FullPath);
+        await CloseDeleteDirectoryDialog();
+        GoToSubFolder(_currentFolder!.FullPath);
     }
 
     private void OnCellRender(DataGridCellRenderEventArgs<FileSystemItemViewModel> args)
@@ -265,10 +269,5 @@ public partial class Index
             args.Attributes.Add("style",
                 $"background-color: var(--rz-secondary-lighter);");
         }
-    }
-
-    private void OnChange3(bool? value, string name)
-    {
-        Console.WriteLine($"Swithch changed to: {_deleteFolderWithContents}");
     }
 }

@@ -1,4 +1,5 @@
 using FileManagerApplication.Services;
+using FileManagerDomain.Interfaces;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddRadzenComponents();
-builder.Services.AddScoped<FileManager>();
+builder.Services.AddScoped<IFileManager, FileManager>();
 
 var app = builder.Build();
 

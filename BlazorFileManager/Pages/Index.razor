@@ -6,7 +6,7 @@
 @using Humanizer
 @using ByteSizeLib
 @inject IJSRuntime JSRuntime
-@inject FileManager _fileManager
+@inject FileManagerDomain.Interfaces.IFileManager _fileManager
 @inject DialogService DialogService
 
 <PageTitle>Blazor File Manager</PageTitle>
@@ -19,10 +19,10 @@ else
 {
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
                  Gap="1rem" Wrap="FlexWrap.Wrap" class="my-2" Style="height: 5vh">
-        <RadzenButton Text="Add New Folder" @ref=button Click="@(args => popup.ToggleAsync(button.Element))"
+        <RadzenButton Text="Add New Folder" @ref=button Click="@(args => popup!.ToggleAsync(button!.Element))"
                       Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Disabled="_currentFolder.IsRoot" />
 
-        <RadzenButton Text="Delete Folder" @ref=button2 Click="@(args => popup2.ToggleAsync(button2.Element))"
+        <RadzenButton Text="Delete Folder" @ref=button2 Click="@(args => popup2!.ToggleAsync(button2!.Element))"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary"
                       Disabled="@(!isFolderSelected || _currentFolder.IsRoot || selectedCellData.Any(x => x.Item1.Name == ".."))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
@@ -55,8 +55,7 @@ else
             <h3>Are you sure?</h3>
             <RadzenIcon Icon="warning" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
             <p>Recursive deletion (deletes all files and folders within the folder): </p>
-            <RadzenSwitch @bind-Value=@_deleteFolderWithContents Change=@(args => OnChange3(args, "Switch"))
-                          InputAttributes="@(new Dictionary<string,object>(){ { "aria-label", "Switch value" }})" />
+            <RadzenSwitch @bind-Value=@_deleteFolderWithContents />
 
             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
                 <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
