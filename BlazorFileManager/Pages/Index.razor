@@ -11,7 +11,7 @@
 
 <PageTitle>Blazor File Manager</PageTitle>
 
-@if (_currentFolder is null || _items == null)
+@if (_currentFolder is null || _currentFolder.InnerItems == null)
 {
     <p><em>Loading...</em></p>
 }

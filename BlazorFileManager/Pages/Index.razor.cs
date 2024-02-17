@@ -10,7 +10,7 @@ namespace BlazorFileManager.Pages;
 public partial class Index
 {
     public string? NewDirectoryName { get; set; }
-    private List<FileSystemItemViewModel>? _items;
+    //private List<FileSystemItemViewModel>? _items;
     private CurrentFolderViewModel? _currentFolder;
     private readonly string type = "Click";
     private bool isFolderSelected = false;
@@ -31,7 +31,7 @@ public partial class Index
     {
         var y = selectedCellData.Any();
         NewDirectoryName = null;
-        _items = new();
+        //_items = new();
         _currentFolder = new();
         AddAllDrivesToDisplayModel();
     }
@@ -101,7 +101,7 @@ public partial class Index
     {
         if (string.IsNullOrWhiteSpace(path))
         {
-            _items = new();
+            //_items = new();
             _currentFolder = new();
             AddAllDrivesToDisplayModel();
             return;
@@ -109,7 +109,7 @@ public partial class Index
 
         var dirInfo = _fileManager.GetDirectoryInfo(path);
         var temp = dirInfo.Parent;
-        if (_items[0].FullName == path)
+        if (_currentFolder.InnerItems[0].FullName == path)
         {
             temp ??= string.Empty;
         }
@@ -136,9 +136,8 @@ public partial class Index
         //    return;
         //}
 
-        _items = new();
+        //_items = new();
         _currentFolder = new();
-        _items.Add(CreateParentItem(temp));
         _currentFolder = new CurrentFolderViewModel()
         {
             Name = path,
@@ -146,14 +145,16 @@ public partial class Index
             Parent = temp,
             IsRoot = false,
         };
+        _currentFolder.InnerItems.Add(CreateParentItem(temp));
         AddAllFoldersToDisplayModel(directories);
     }
 
     private void AddAllFoldersToDisplayModel(IEnumerable<DirectoryInformation> folders)
     {
+        List<FileSystemItemViewModel> temp = new();
         foreach (var folder in folders)
         {
-            _items.Add(new FileSystemItemViewModel()
+            temp.Add(new FileSystemItemViewModel()
             {
                 Name = folder.Name,
                 FullName = folder.FullName,
@@ -163,15 +164,35 @@ public partial class Index
             });
         }
 
-        _currentFolder.InnerItems.AddRange(_items);
+        _currentFolder.InnerItems.AddRange(temp);
+    }
+
+    private void AddAllFilesToDisplayModel(IEnumerable<FileInformation> files)
+    {
+        List<FileSystemItemViewModel> temp = new();
+        foreach (var file in files)
+        {
+            temp.Add(new FileSystemItemViewModel()
+            {
+                Name = file.Name,
+                FullName = file.FullName,
+                Parent = string.Empty,
+                Extension = file.Extension,
+                Size = file.Size,
+                ModifiedDate = file.ModifiedDate
+            });
+        }
+
+        _currentFolder.InnerItems.AddRange(temp);
     }
 
     private void AddAllDrivesToDisplayModel()
     {
         var drives = _fileManager.GetAllDrives();
+        List<FileSystemItemViewModel> temp = new();
         foreach (var drive in drives)
         {
-            _items.Add(new FileSystemItemViewModel()
+            temp.Add(new FileSystemItemViewModel()
             {
                 Name = drive.Name,
                 FullName = drive.Name,
@@ -185,7 +206,7 @@ public partial class Index
         {
             IsRoot = true,
         };
-        _currentFolder.InnerItems.AddRange(_items);
+        _currentFolder.InnerItems.AddRange(temp);
     }
 
     private FileSystemItemViewModel CreateParentItem(string parent)
