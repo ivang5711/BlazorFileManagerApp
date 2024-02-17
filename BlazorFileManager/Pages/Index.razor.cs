@@ -26,11 +26,8 @@ public partial class Index
             new List<Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>>();
 
-    private FileManagerClient? _fileManagerClient;
-
     protected override void OnInitialized()
     {
-        _fileManagerClient = new(_fileManager);
         InitializeRootDirectory();
         RefreshDirectoryContents();
     }
