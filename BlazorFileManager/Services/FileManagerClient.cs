@@ -5,7 +5,7 @@ using FileManagerDomain.Models;
 
 namespace BlazorFileManager.Services;
 
-public class FileManagerClient
+public class FileManagerClient : IFileManagerClient
 {
     private readonly IFileManager _fileManager;
     public string ParentFolderDisplayName { get; set; } = "..";

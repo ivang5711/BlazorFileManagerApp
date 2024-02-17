@@ -1,5 +1,4 @@
 using BlazorFileManager.Models;
-using BlazorFileManager.Services;
 using FileManagerDomain.Exceptions;
 using Microsoft.JSInterop;
 using Radzen;
@@ -16,7 +15,7 @@ public partial class Index
     private bool _isFolderSelected = false;
     private bool _deleteFolderWithContents;
     private Popup _createNewFolderDialog = new();
-    private string? _errorMessage = string.Empty;
+    private string _errorMessage = string.Empty;
     private Popup _deleteFolderConfirmationDialog = new();
     private CurrentFolderViewModel? _currentFolder = new();
 
@@ -81,7 +80,7 @@ public partial class Index
 
     private async Task RequestCreateNewDirectory()
     {
-        _errorMessage = null;
+        _errorMessage = string.Empty;
         if (NewDirectoryName is not null)
         {
             await CreateNewDirectory();
@@ -208,7 +207,7 @@ public partial class Index
         DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
         Select(args);
-        _errorMessage = null;
+        _errorMessage = string.Empty;
     }
 
     private void OnCellDoubleClick(

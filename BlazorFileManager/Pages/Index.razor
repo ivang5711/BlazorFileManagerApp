@@ -3,11 +3,12 @@
 @using Radzen
 @using Radzen.Blazor
 @using Radzen.Blazor.Rendering
+@using BlazorFileManager.Services
 @using Humanizer
 @using ByteSizeLib
 @inject IJSRuntime JSRuntime
 @inject FileManagerDomain.Interfaces.IFileManager _fileManager
-@inject BlazorFileManager.Services.FileManagerClient _fileManagerClient
+@inject IFileManagerClient _fileManagerClient
 @inject DialogService DialogService
 
 <PageTitle>Blazor File Manager</PageTitle>

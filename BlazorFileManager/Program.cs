@@ -10,7 +10,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddRadzenComponents();
 builder.Services.AddScoped<IFileManager, FileManager>();
-builder.Services.AddScoped<FileManagerClient>();
+builder.Services.AddScoped<IFileManagerClient, FileManagerClient>();
 
 var app = builder.Build();
 
