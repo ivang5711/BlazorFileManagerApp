@@ -30,6 +30,6 @@
         /// <summary>
         /// last modified date
         /// </summary>
-        public DateTime ModifiedDate { get; set; }
+        public string ModifiedDate { get; set; }
     }
 }

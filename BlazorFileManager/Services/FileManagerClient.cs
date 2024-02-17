@@ -271,7 +271,7 @@ public class FileManagerClient : IFileManagerClient
                 FullName = folder.FullName,
                 Parent = folder.Parent,
                 Extension = string.Empty,
-                ModifiedDate = folder.ModifiedDate
+                ModifiedDate = folder.ModifiedDate.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
             });
         }
 
@@ -298,7 +298,7 @@ public class FileManagerClient : IFileManagerClient
                 Parent = string.Empty,
                 Extension = file.Extension,
                 Size = file.Size.Bytes().Humanize(),
-                ModifiedDate = file.ModifiedDate
+                ModifiedDate = file.ModifiedDate.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
             });
         }
 
