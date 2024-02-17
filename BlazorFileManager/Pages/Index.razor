@@ -19,12 +19,13 @@ else
 {
     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center"
                  Gap="1rem" Wrap="FlexWrap.Wrap" class="my-2" Style="height: 5vh">
-        <RadzenButton Text="Add New Folder" @ref=button Click="@(args => popup!.ToggleAsync(button!.Element))"
+        <RadzenButton Text="Add New Folder" @ref=_addNewFolder
+                      Click="@(args => _createNewFolderDialog.ToggleAsync(_addNewFolder.Element))"
                       Icon="add_circle_outline" ButtonStyle="ButtonStyle.Primary" Disabled="_currentFolder.IsRoot" />
-
-        <RadzenButton Text="Delete Folder" @ref=button2 Click="@(args => popup2!.ToggleAsync(button2!.Element))"
+        <RadzenButton Text="Delete Folder" @ref=_deleteFolder
+                      Click="@(args => _deleteFolderConfirmationDialog.ToggleAsync(_deleteFolder.Element))"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary"
-                      Disabled="@(!isFolderSelected || _currentFolder.IsRoot || selectedCellData.Any(x => x.Item1.Name == ".."))" />
+                      Disabled="@(!_isFolderSelected || _currentFolder.IsRoot || _selectedCellData.Any(x => x.Item1.Name == ".."))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
@@ -32,10 +33,8 @@ else
                 @_errorMessage
             </RadzenAlert>
         }
-
     </RadzenStack>
-
-    <Popup @ref=popup Lazy=false Open="@OnOpen"
+    <Popup @ref=_createNewFolderDialog Lazy=false Open="@OnCreateNewDirectory"
            Style="display:none;position:absolute;height:auto;width:38%;">
         <RadzenCard>
             <RadzenTextBox Placeholder="Enter new directory name..." class="w-100 mb-2" aria-label="TextBox with placeholder"
@@ -44,12 +43,11 @@ else
                 <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
                               Click=@CloseCreateDirectoryDialog />
                 <RadzenButton Variant="Variant.Text" Icon="add_circle_outline" Text="Create"
-                              Click=@CreateNewDirectory />
+                              Click=@RequestCreateNewDirectory />
             </RadzenStack>
         </RadzenCard>
     </Popup>
-
-    <Popup @ref=popup2 Lazy=false Open="@OnOpen2"
+    <Popup @ref=_deleteFolderConfirmationDialog Lazy=false Open="@OnDeleteDirectory"
            Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
         <RadzenCard>
             <h3>Are you sure?</h3>
@@ -64,7 +62,6 @@ else
             </RadzenStack>
         </RadzenCard>
     </Popup>
-
     <RadzenSplitter Orientation="Orientation.Vertical" style="height: 85vh; border: 1px solid rgba(0,0,0,.08);">
         <RadzenSplitterPane Size="100px">
             <RadzenSplitter>
@@ -104,4 +101,3 @@ else
                    Placeholder="@_currentFolder.FullPath" class="w-100 mt-1"
                    Style="height: 3vh;" aria-label="Disabled TextBox" />
 }
-

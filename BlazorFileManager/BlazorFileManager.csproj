@@ -16,8 +16,4 @@
     <ProjectReference Include="..\FileManagerApplication\FileManagerApplication.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Components\" />
-  </ItemGroup>
-
 </Project>
