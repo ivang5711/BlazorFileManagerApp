@@ -19,13 +19,13 @@ namespace FileManagerApplication.Services
             }
             catch (UnauthorizedAccessException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "You do not have permission to access this directory";
                 throw new AccessDeniedException(errorMessage, ex);
             }
             catch (IOException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "Failed to access the requested directory";
                 throw new InnerErrorException(errorMessage, ex);
             }
@@ -79,7 +79,7 @@ namespace FileManagerApplication.Services
             }
             catch (SecurityException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "Failed to get the requested directory info";
                 throw new InnerErrorException(errorMessage, ex);
             }
@@ -87,7 +87,7 @@ namespace FileManagerApplication.Services
             return directoryInfo;
         }
 
-        private static DirectoryInformation 
+        private static DirectoryInformation
             GetDirectoryInformationByDirectoryInfo(DirectoryInfo directory)
         {
             return new DirectoryInformation
@@ -116,7 +116,7 @@ namespace FileManagerApplication.Services
             }
             catch (UnauthorizedAccessException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "You do not have permission to access this directory";
                 throw new AccessDeniedException(errorMessage, ex);
             }
@@ -127,7 +127,7 @@ namespace FileManagerApplication.Services
             }
             catch (SecurityException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "Failed to get the requested directory info";
                 throw new InnerErrorException(errorMessage, ex);
             }
@@ -135,7 +135,7 @@ namespace FileManagerApplication.Services
             return directories;
         }
 
-        private static List<DirectoryInformation> 
+        private static List<DirectoryInformation>
             GetAllInnerDirectories(DirectoryInfo[] directories)
         {
             List<DirectoryInformation> result = new List<DirectoryInformation>();
@@ -176,7 +176,7 @@ namespace FileManagerApplication.Services
             return directories;
         }
 
-        private static List<FileInformation> 
+        private static List<FileInformation>
             GetAllInnerFilesByPath(FileInfo[] directories)
         {
             List<FileInformation> result = new List<FileInformation>();
@@ -203,7 +203,7 @@ namespace FileManagerApplication.Services
             }
             catch (UnauthorizedAccessException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "You do not have permission to access this directory";
                 throw new AccessDeniedException(errorMessage, ex);
             }
@@ -247,7 +247,7 @@ namespace FileManagerApplication.Services
             }
             catch (UnauthorizedAccessException ex)
             {
-                string errorMessage = 
+                string errorMessage =
                     "You do not have permission to access this directory";
                 throw new AccessDeniedException(errorMessage, ex);
             }
