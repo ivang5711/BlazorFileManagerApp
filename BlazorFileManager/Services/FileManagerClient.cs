@@ -260,7 +260,7 @@ public class FileManagerClient : IFileManagerClient
         CurrentFolder!.InnerItems.AddRange(foldersViewModels);
     }
 
-    private static List<FileSystemItemViewModel> GetFoldersViewModels(
+    private List<FileSystemItemViewModel> GetFoldersViewModels(
         IEnumerable<DirectoryInformation> folders)
     {
         List<FileSystemItemViewModel> foldersViewModels = new();
@@ -287,7 +287,7 @@ public class FileManagerClient : IFileManagerClient
         CurrentFolder!.InnerItems.AddRange(filesViewModels);
     }
 
-    private static List<FileSystemItemViewModel> GetFilesViewModels(IEnumerable<FileInformation> files)
+    private List<FileSystemItemViewModel> GetFilesViewModels(IEnumerable<FileInformation> files)
     {
         List<FileSystemItemViewModel> filesViewModels = new();
         foreach (var file in files)
