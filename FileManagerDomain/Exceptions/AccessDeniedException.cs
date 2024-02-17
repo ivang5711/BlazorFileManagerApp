@@ -6,6 +6,7 @@ namespace FileManagerDomain.Exceptions
     {
         public AccessDeniedException() { }
         public AccessDeniedException(string message) : base(message) { }
-        public AccessDeniedException(string message, Exception inner) : base(message, inner) { }
+        public AccessDeniedException(string message, Exception inner) 
+            : base(message, inner) { }
     }
 }

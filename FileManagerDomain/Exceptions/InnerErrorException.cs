@@ -6,6 +6,7 @@ namespace FileManagerDomain.Exceptions
     {
         public InnerErrorException() { }
         public InnerErrorException(string message) : base(message) { }
-        public InnerErrorException(string message, Exception inner) : base(message, inner) { }
+        public InnerErrorException(string message, Exception inner) 
+            : base(message, inner) { }
     }
 }

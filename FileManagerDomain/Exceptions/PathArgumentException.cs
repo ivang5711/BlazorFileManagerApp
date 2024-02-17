@@ -8,6 +8,7 @@ namespace FileManagerDomain.Exceptions
     {
         public PathArgumentException() { }
         public PathArgumentException(string message) : base(message) { }
-        public PathArgumentException(string message, Exception inner) : base(message, inner) { }
+        public PathArgumentException(string message, Exception inner) 
+            : base(message, inner) { }
     }
 }
