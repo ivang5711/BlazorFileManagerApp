@@ -9,6 +9,7 @@ namespace BlazorFileManager.Services;
 public class FileManagerClient : IFileManagerClient
 {
     private readonly IFileManager _fileManager;
+    public string DateFormat { get; set; } = "yyyy'-'MM'-'dd' 'HH':'mm':'ss";
     public string ParentFolderDisplayName { get; set; } = "..";
     public CurrentFolderViewModel CurrentFolder { get; set; } = new();
 
@@ -271,7 +272,7 @@ public class FileManagerClient : IFileManagerClient
                 FullName = folder.FullName,
                 Parent = folder.Parent,
                 Extension = string.Empty,
-                ModifiedDate = folder.ModifiedDate.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+                ModifiedDate = folder.ModifiedDate.ToString(DateFormat)
             });
         }
 
@@ -298,7 +299,7 @@ public class FileManagerClient : IFileManagerClient
                 Parent = string.Empty,
                 Extension = file.Extension,
                 Size = file.Size.Bytes().Humanize(),
-                ModifiedDate = file.ModifiedDate.ToString("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+                ModifiedDate = file.ModifiedDate.ToString(DateFormat)
             });
         }
 
