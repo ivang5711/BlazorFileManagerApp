@@ -5,11 +5,16 @@ namespace FileManagerDomain.Interfaces
 {
     public interface IFileManager
     {
-        string CreateFolder(string path);   
-        string DeleteFolder(string path, bool deleteWithContents);
+        void CreateFolder(string path);
+
+        void DeleteFolder(string path, bool deleteWithContents);
+
         IEnumerable<DriveInformation> GetAllDrives();
-        IEnumerable<DirectoryInformation> GetAllInnerDerictoriesInfo(string Path);
-        IEnumerable<FileInformation> GetAllInnerFilesInfo(string Path);
-        DirectoryInformation GetDirectoryInfo(string path);
+
+        IEnumerable<DirectoryInformation> GetAllInnerDerictoriesInformation(string path);
+
+        IEnumerable<FileInformation> GetAllInnerFilesInfo(string path);
+
+        DirectoryInformation GetDirectoryInformation(string path);
     }
 }

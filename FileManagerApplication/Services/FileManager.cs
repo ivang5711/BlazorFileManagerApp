@@ -4,6 +4,7 @@ using FileManagerDomain.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security;
 
 namespace FileManagerApplication.Services
 {
@@ -45,12 +46,43 @@ namespace FileManagerApplication.Services
             return result;
         }
 
-        public DirectoryInformation GetDirectoryInfo(string path)
+        public DirectoryInformation GetDirectoryInformation(string path)
         {
-            return GetDirectoryInformation(new DirectoryInfo(path));
+            return GetDirectoryInformation2(GetDirectoryInfoByPath(path));
         }
 
-        private static DirectoryInformation GetDirectoryInformation(DirectoryInfo directory)
+        private static DirectoryInfo GetDirectoryInfoByPath(string path)
+        {
+            DirectoryInfo directoryInfo;
+            try
+            {
+                directoryInfo = new DirectoryInfo(path);
+            }
+            catch (ArgumentNullException ex)
+            {
+                string errorMessage = "Path should not be null";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (ArgumentException ex)
+            {
+                string errorMessage = "Check path provided";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (PathTooLongException ex)
+            {
+                string errorMessage = "The path provided is too long";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (SecurityException ex)
+            {
+                string errorMessage = "Failed to get the requested directory info";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+
+            return directoryInfo;
+        }
+
+        private static DirectoryInformation GetDirectoryInformation2(DirectoryInfo directory)
         {
             return new DirectoryInformation
             {
@@ -62,9 +94,40 @@ namespace FileManagerApplication.Services
             };
         }
 
-        public IEnumerable<DirectoryInformation> GetAllInnerDerictoriesInfo(string Path)
+        public IEnumerable<DirectoryInformation> GetAllInnerDerictoriesInformation(string path)
         {
-            DirectoryInfo[] directories = new DirectoryInfo(Path).GetDirectories();
+            DirectoryInfo[] directories = GetInnerDirectoriesByPath(path);
+            return GetAllInnerDirectories(directories);
+        }
+
+        private static DirectoryInfo[] GetInnerDirectoriesByPath(string path)
+        {
+            DirectoryInfo[] directories;
+            try
+            {
+                directories = GetDirectoryInfoByPath(path).GetDirectories();
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                string errorMessage = "You do not have permission to access this directory";
+                throw new AccessDeniedException(errorMessage, ex);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                string errorMessage = "The requested directory was not found";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+            catch (SecurityException ex)
+            {
+                string errorMessage = "Failed to get the requested directory info";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+
+            return directories;
+        }
+
+        private static List<DirectoryInformation> GetAllInnerDirectories(DirectoryInfo[] directories)
+        {
             List<DirectoryInformation> result = new List<DirectoryInformation>();
             foreach (var d in directories)
             {
@@ -81,9 +144,30 @@ namespace FileManagerApplication.Services
             return result;
         }
 
-        public IEnumerable<FileInformation> GetAllInnerFilesInfo(string Path)
+        public IEnumerable<FileInformation> GetAllInnerFilesInfo(string path)
         {
-            FileInfo[] directories = new DirectoryInfo(Path).GetFiles();
+            FileInfo[] directories = GetInnerFilesInfo(path);
+            return GetAllInnerFilesByPath(directories);
+        }
+
+        private static FileInfo[] GetInnerFilesInfo(string path)
+        {
+            FileInfo[] directories;
+            try
+            {
+                directories = GetDirectoryInfoByPath(path).GetFiles();
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                string errorMessage = "The requested directory was not found";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+
+            return directories;
+        }
+
+        private static List<FileInformation> GetAllInnerFilesByPath(FileInfo[] directories)
+        {
             List<FileInformation> result = new List<FileInformation>();
             foreach (var d in directories)
             {
@@ -100,34 +184,85 @@ namespace FileManagerApplication.Services
             return result;
         }
 
-        public string CreateFolder(string path)
+        public void CreateFolder(string path)
         {
             try
             {
                 Directory.CreateDirectory(path);
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine(ex);
-                return "An error occured while creating directory";
+                string errorMessage = "You do not have permission to access this directory";
+                throw new AccessDeniedException(errorMessage, ex);
             }
-
-            return string.Empty;
+            catch (ArgumentNullException ex)
+            {
+                string errorMessage = "Path should not be null";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (ArgumentException ex)
+            {
+                string errorMessage = "Check path provided";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (PathTooLongException ex)
+            {
+                string errorMessage = "The path provided is too long";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                string errorMessage = "Directory can not be found";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+            catch (NotSupportedException ex)
+            {
+                string errorMessage = "Failed to create new directory";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+            catch (IOException ex)
+            {
+                string errorMessage = "Failed to create new directory";
+                throw new InnerErrorException(errorMessage, ex);
+            }
         }
 
-        public string DeleteFolder(string path, bool deleteWithContents)
+        public void DeleteFolder(string path, bool deleteWithContents)
         {
             try
             {
                 Directory.Delete(path, deleteWithContents);
             }
-            catch (Exception ex)
+            catch (UnauthorizedAccessException ex)
             {
-                Console.WriteLine(ex);
-                return "An error occured while deleting directory";
+                string errorMessage = "You do not have permission to access this directory";
+                throw new AccessDeniedException(errorMessage, ex);
             }
-
-            return string.Empty;
+            catch (ArgumentNullException ex)
+            {
+                string errorMessage = "Path should not be null";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (ArgumentException ex)
+            {
+                string errorMessage = "Check path provided";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (PathTooLongException ex)
+            {
+                string errorMessage = "The path provided is too long";
+                throw new PathArgumentException(errorMessage, ex);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                string errorMessage = "Directory can not be found";
+                throw new InnerErrorException(errorMessage, ex);
+            }
+            catch (IOException ex)
+            {
+                string errorMessage = "Failed to delete the directory";
+                throw new InnerErrorException(errorMessage, ex);
+            }
         }
     }
 }

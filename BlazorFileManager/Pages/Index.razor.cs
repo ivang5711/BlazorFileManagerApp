@@ -11,7 +11,7 @@ namespace BlazorFileManager.Pages;
 public partial class Index
 {
     public string? NewDirectoryName { get; set; }
-    private CurrentFolderViewModel? _currentFolder;
+    private CurrentFolderViewModel? _currentFolder = new();
     private readonly string type = "Click";
     private bool isFolderSelected = false;
     private string? _errorMessage = string.Empty;
@@ -29,24 +29,59 @@ public partial class Index
 
     protected override void OnInitialized()
     {
-        NewDirectoryName = null;
-        _currentFolder = new();
         AddAllDrivesToDisplayModel();
     }
 
     private void CreateNewFolder(string newDirectoryName)
     {
-        var newFolder = System.IO.Path
+        string newFolder = System.IO.Path
             .Combine(_currentFolder!.FullPath, newDirectoryName);
-        _fileManager.CreateFolder(newFolder);
-        Console.WriteLine("New folder created!");
-        GoToSubFolder(_currentFolder.FullPath);
+        try
+        {
+            _fileManager.CreateFolder(newFolder);
+        }
+        catch (PathArgumentException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
+
+        NavigateToSubFolder(_currentFolder.FullPath);
     }
 
     private void DeleteFolder()
     {
-        _errorMessage = _fileManager
-            .DeleteFolder(selectedCellData[0].Item1.FullName, _deleteFolderWithContents);
+        try
+        {
+            _fileManager.DeleteFolder(
+                selectedCellData[0].Item1.FullName,
+                _deleteFolderWithContents);
+        }
+        catch (PathArgumentException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+        }
     }
 
     private void Select(DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
@@ -91,11 +126,10 @@ public partial class Index
             Select(args);
         }
 
-        _errorMessage = null;
-        GoToSubFolder(args.Data.FullName);
+        NavigateToSubFolder(args.Data.FullName);
     }
 
-    private void GoToSubFolder(string path)
+    private void NavigateToSubFolder(string path)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -104,7 +138,24 @@ public partial class Index
             return;
         }
 
-        var dirInfo = _fileManager.GetDirectoryInfo(path);
+        DirectoryInformation dirInfo;
+        try
+        {
+            dirInfo = _fileManager.GetDirectoryInformation(path);
+        }
+        catch (PathArgumentException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+
         var temp = dirInfo.Parent;
         if (_currentFolder!.InnerItems[0].FullName == path)
         {
@@ -115,8 +166,55 @@ public partial class Index
             temp ??= dirInfo.Root;
         }
 
-        var directories = _fileManager.GetAllInnerDerictoriesInfo(path);
-        var files = _fileManager.GetAllInnerFilesInfo(path);
+        IEnumerable<DirectoryInformation> directories;
+
+        try
+        {
+            directories = _fileManager.GetAllInnerDerictoriesInformation(path);
+        }
+        catch (PathArgumentException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+
+        IEnumerable<FileInformation> files;
+        try
+        {
+            files = _fileManager.GetAllInnerFilesInfo(path);
+        }
+        catch (PathArgumentException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (InnerErrorException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+        catch (AccessDeniedException ex)
+        {
+            Console.WriteLine(ex.Message);
+            _errorMessage = ex.Message;
+            return;
+        }
+
         _currentFolder = new();
         _currentFolder = new CurrentFolderViewModel()
         {
@@ -245,11 +343,14 @@ public partial class Index
 
     private async Task CreateNewDirectory()
     {
-        if (!string.IsNullOrWhiteSpace(NewDirectoryName))
+        _errorMessage = null;
+        if (NewDirectoryName == null)
         {
-            CreateNewFolder(NewDirectoryName!);
+            _errorMessage = "Directory name can not be empty.";
+            return;
         }
 
+        CreateNewFolder(NewDirectoryName!);
         NewDirectoryName = null;
         await CloseCreateDirectoryDialog();
     }
@@ -258,7 +359,7 @@ public partial class Index
     {
         DeleteFolder();
         await CloseDeleteDirectoryDialog();
-        GoToSubFolder(_currentFolder!.FullPath);
+        NavigateToSubFolder(_currentFolder!.FullPath);
     }
 
     private void OnCellRender(DataGridCellRenderEventArgs<FileSystemItemViewModel> args)
