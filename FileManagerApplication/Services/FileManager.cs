@@ -51,7 +51,8 @@ namespace FileManagerApplication.Services
 
         public DirectoryInformation GetDirectoryInformation(string path)
         {
-            return GetDirectoryInformation2(GetDirectoryInfoByPath(path));
+            return GetDirectoryInformationByDirectoryInfo(
+                GetDirectoryInfoByPath(path));
         }
 
         private static DirectoryInfo GetDirectoryInfoByPath(string path)
@@ -87,7 +88,7 @@ namespace FileManagerApplication.Services
         }
 
         private static DirectoryInformation 
-            GetDirectoryInformation2(DirectoryInfo directory)
+            GetDirectoryInformationByDirectoryInfo(DirectoryInfo directory)
         {
             return new DirectoryInformation
             {
