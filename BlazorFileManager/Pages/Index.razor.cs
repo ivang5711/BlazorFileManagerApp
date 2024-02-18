@@ -47,7 +47,7 @@ public partial class Index
     private string[] _textTypesForPreview = Array.Empty<string>();
     private string[] _imageTypesForPreview = Array.Empty<string>();
     private bool popup = false;
-    private ValidationModel DirectoryNameValidationModel = new();
+    private readonly ValidationModel _directoryNameValidationModel = new();
 
     private readonly IList<
         Tuple<FileSystemItemViewModel,

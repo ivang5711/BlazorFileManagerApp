@@ -38,17 +38,17 @@ else
            Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
         <div class="row" style="width:600px;">
             <div class="col offset-lg-3 bg-white rounded-3 p-3 shadow" style="width:600px;">
-                <RadzenTemplateForm TItem="ValidationModel" Data=@DirectoryNameValidationModel Submit=@OnSubmit
+                <RadzenTemplateForm TItem="ValidationModel" Data=@_directoryNameValidationModel Submit=@OnSubmit
                                     InvalidSubmit=@OnInvalidSubmit>
                     <RadzenFieldset Text="Create New Directory">
                         <div class="col" style="width:600px;">
                             <RadzenTextBox style="display: block"
                                            Name="Email"
-                                           @bind-Value=@DirectoryNameValidationModel.DirectoryName class="w-100"
+                                           @bind-Value=@_directoryNameValidationModel.DirectoryName class="w-100"
                                            Placeholder="Enter new directory name..." />
                             <RadzenRequiredValidator Component="Email" Text="Email is required" Popup=@popup />
                             <RadzenCustomValidator Component="Email"
-                                                   Validator="@(() => ValidateNewEmail(DirectoryNameValidationModel.DirectoryName))"
+                                                   Validator="@(() => ValidateNewEmail(_directoryNameValidationModel.DirectoryName))"
                                                    Text="@DirectoryNameValidationErrorMessage"
                                                    Popup=@popup />
                         </div>
