@@ -39,11 +39,19 @@ namespace FileManagerApplication.Services
             List<DriveInformation> result = new List<DriveInformation>();
             foreach (var drive in drives)
             {
+                try
+                {
+
                 result.Add(new DriveInformation
                 {
                     Name = drive.Name,
                     Size = drive.TotalSize
                 });
+                }
+                catch(UnauthorizedAccessException ex)
+                {
+                    Console.WriteLine(ex);
+                }
             }
 
             return result;
