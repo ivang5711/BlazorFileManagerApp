@@ -22,7 +22,9 @@ else
         <RadzenButton Text="Delete Folder" @ref=_deleteFolder
                       Click="@(args => _deleteFolderConfirmationDialog.ToggleAsync(_deleteFolder.Element))"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary"
-                      Disabled="@(!_isFolderSelected || _currentFolder.IsRoot || _selectedCellData.Any(x => x.Item1.Name == _fileManagerClient.ParentFolderDisplayName))" />
+                      Disabled="@(!_isFolderSelected || 
+                                  _currentFolder.IsRoot || 
+                                  _selectedCellData.Any(x => x.Item1.Name == _fileManagerClient.ParentFolderDisplayName))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
