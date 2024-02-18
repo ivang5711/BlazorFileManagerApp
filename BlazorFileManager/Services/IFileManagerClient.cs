@@ -19,6 +19,6 @@ namespace BlazorFileManager.Services
 
         string GetImageDataForPreview(string path);
 
-        public string GetTextFileContentsForPreview(string path);
+        string GetTextFileContentsForPreview(string path);
     }
 }
