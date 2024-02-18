@@ -35,18 +35,26 @@ else
            Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
         <div class="row" style="width:600px;">
             <div class="col offset-lg-3 bg-white rounded-3 p-3 shadow" style="width:600px;">
-                <RadzenTemplateForm TItem="ValidationModel" Data=@DirectoryNameValidationModel Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                <RadzenTemplateForm TItem="ValidationModel" Data=@DirectoryNameValidationModel Submit=@OnSubmit
+                                    InvalidSubmit=@OnInvalidSubmit>
                     <RadzenFieldset Text="Create New Directory">
                         <div class="col" style="width:600px;">
-                            <RadzenTextBox style="display: block" Name="Email" @bind-Value=@DirectoryNameValidationModel.DirectoryName class="w-100" Placeholder="Enter new directory name..." />
+                            <RadzenTextBox style="display: block"
+                                           Name="Email"
+                                           @bind-Value=@DirectoryNameValidationModel.DirectoryName class="w-100"
+                                           Placeholder="Enter new directory name..." />
                             <RadzenRequiredValidator Component="Email" Text="Email is required" Popup=@popup />
-                            <RadzenCustomValidator Component="Email" Validator="@(() => ValidateNewEmail(DirectoryNameValidationModel.DirectoryName))" Text="@DirectoryNameValidationErrorMessage" Popup=@popup />
+                            <RadzenCustomValidator Component="Email"
+                                                   Validator="@(() => ValidateNewEmail(DirectoryNameValidationModel.DirectoryName))"
+                                                   Text="@DirectoryNameValidationErrorMessage"
+                                                   Popup=@popup />
                         </div>
                         <div class="col mt-1">
                             <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1">
                                 <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
                                               Click=@CloseCreateDirectoryDialog />
-                                <RadzenButton ButtonType="ButtonType.Submit" Variant="Variant.Text" Icon="add_circle_outline" Text="Create" />
+                                <RadzenButton ButtonType="ButtonType.Submit" Variant="Variant.Text"
+                                              Icon="add_circle_outline" Text="Create" />
                             </RadzenStack>
                         </div>
                     </RadzenFieldset>
@@ -67,9 +75,12 @@ else
                         <span class="ms-2">Recursive deletion</span>
                     </div>
                     <div class="d-flex my-3 align-items-center justify-content-center">
-                        <span hidden="@(!_deleteFolderWithContents)"> This deletes <b>all</b> files and folders within the folder and can not be undone </span>
+                        <span hidden="@(!_deleteFolderWithContents)">
+                            This deletes <b>all</b> files and folders within the folder and can not be undone
+                        </span>
                         <span class="align-items-center ms-1">
-                            <RadzenIcon Icon="warning" Style="align-items: center" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
+                            <RadzenIcon Icon="warning" Style="align-items: center"
+                                        IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
                         </span>
                     </div>
                     <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="3">
@@ -109,12 +120,21 @@ else
                 </RadzenSplitterPane>
                 <RadzenSplitterPane>
                     <RadzenStack Class="rz-mx-auto rz-my-12 h-100">
-                        <RadzenText Visible="@(!string.IsNullOrWhiteSpace(TextFileContents))" Style="white-space: pre-wrap" TextAlign="TextAlign.Left">@TextFileContents</RadzenText>
-                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Class="rz-mx-auto rz-my-12 h-100">
+                        <RadzenText Visible="@(!string.IsNullOrWhiteSpace(TextFileContents))"
+                                    Style="white-space: pre-wrap"
+                                    TextAlign="TextAlign.Left">
+                            @TextFileContents
+                        </RadzenText>
+                        <RadzenStack AlignItems="AlignItems.Center"
+                                     JustifyContent="JustifyContent.Center"
+                                     Class="rz-mx-auto rz-my-12 h-100">
                             <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
                             <RadzenIcon Icon="folder" Style="font-size: 10rem;" Visible="@(ViewMessage == "folder")" />
                             <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
-                            <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="No Preview for this item" Visible="@(!string.IsNullOrWhiteSpace(_base64Image))" />
+                            <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")"
+                                         Style="max-width: 100%; height: auto;"
+                                         AlternateText="No Preview for this item"
+                                         Visible="@(!string.IsNullOrWhiteSpace(_base64Image))" />
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenSplitterPane>
