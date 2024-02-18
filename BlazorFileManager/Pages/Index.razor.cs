@@ -9,18 +9,17 @@ namespace BlazorFileManager.Pages;
 
 public partial class Index
 {
-    public string? NewDirectoryName { get; set; }
-    private string _base64Image = string.Empty;
     private bool _isFolderSelected = false;
     private bool _deleteFolderWithContents;
-    private string _errorMessage = string.Empty;
-    private string[] _imageTypesForPreview = Array.Empty<string>();
-    private string[] _textTypesForPreview = Array.Empty<string>();
     private RadzenButton _addNewFolder = new();
     private RadzenButton _deleteFolder = new();
+    private string _base64Image = string.Empty;
+    private string _errorMessage = string.Empty;
     private Popup _createNewFolderDialog = new();
     private Popup _deleteFolderConfirmationDialog = new();
     private CurrentFolderViewModel? _currentFolder = new();
+    private string[] _textTypesForPreview = Array.Empty<string>();
+    private string[] _imageTypesForPreview = Array.Empty<string>();
 
     private readonly IList<
         Tuple<FileSystemItemViewModel,
@@ -28,6 +27,7 @@ public partial class Index
             new List<Tuple<FileSystemItemViewModel,
                 RadzenDataGridColumn<FileSystemItemViewModel>>>();
 
+    public string? NewDirectoryName { get; set; }
     public string ViewMessage { get; set; } = string.Empty;
     public string TextFileContents { get; set; } = string.Empty;
 
