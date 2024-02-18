@@ -32,9 +32,7 @@ public partial class Index
     private const string _directoryNameEndingValidationErrorMessage =
         "File name can not end with \".\" symbol or whitespace.";
 
-    private string DirectoryNameValidationErrorMessage { get; set; } =
-        string.Empty;
-
+    private bool popup = false;
     private bool _isFolderSelected = false;
     private bool _deleteFolderWithContents;
     private RadzenButton _addNewFolder = new();
@@ -46,7 +44,6 @@ public partial class Index
     private CurrentFolderViewModel? _currentFolder = new();
     private string[] _textTypesForPreview = Array.Empty<string>();
     private string[] _imageTypesForPreview = Array.Empty<string>();
-    private bool popup = false;
     private readonly ValidationModel _directoryNameValidationModel = new();
 
     private readonly IList<
@@ -58,6 +55,9 @@ public partial class Index
     public string? NewDirectoryName { get; set; }
     public string ViewMessage { get; set; } = string.Empty;
     public string TextFileContents { get; set; } = string.Empty;
+
+    private string DirectoryNameValidationErrorMessage { get; set; } =
+        string.Empty;
 
     protected override void OnInitialized()
     {
