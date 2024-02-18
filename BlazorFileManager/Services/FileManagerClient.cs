@@ -13,7 +13,6 @@ public class FileManagerClient : IFileManagerClient
     public string DateFormat { get; set; } = string.Empty;
     public string ParentFolderDisplayName { get; set; } = string.Empty;
     public CurrentFolderViewModel CurrentFolder { get; set; } = new();
-
     public string[] ImageTypesForPreview { get; set; } = Array.Empty<string>();
     public string[] TextTypesForPreview { get; set; } = Array.Empty<string>();
 
@@ -132,17 +131,17 @@ public class FileManagerClient : IFileManagerClient
 
     private string GetParentDirectory(string path, DirectoryInformation directoryInformation)
     {
-        string temp = directoryInformation.Parent;
+        string parentDirectory = directoryInformation.Parent;
         if (CurrentFolder!.InnerItems[0].FullName == path)
         {
-            temp ??= string.Empty;
+            parentDirectory ??= string.Empty;
         }
         else
         {
-            temp ??= directoryInformation.Root;
+            parentDirectory ??= directoryInformation.Root;
         }
 
-        return temp;
+        return parentDirectory;
     }
 
     private IEnumerable<FileInformation> GetFiles(string path)
