@@ -189,7 +189,7 @@ public partial class Index
         try
         {
             _fileManagerClient!.DeleteFolder(
-                        _selectedCellData[0].Item1.FullName,
+                        _selectedCellData[0].Item1.FullName!,
                         _deleteFolderWithContents);
         }
         catch (PathArgumentException ex)
@@ -240,8 +240,8 @@ public partial class Index
                 _selectedCellData.RemoveAt(0);
             }
 
-            string extension = _selectedCellData[0].Item1.Extension;
-            string path = _selectedCellData[0].Item1.FullName;
+            string extension = _selectedCellData[0].Item1.Extension!;
+            string path = _selectedCellData[0].Item1.FullName!;
             SetUpPreview(extension, path);
         }
     }
@@ -278,7 +278,7 @@ public partial class Index
     private void OnCellDoubleClick(
         DataGridCellMouseEventArgs<FileSystemItemViewModel> args)
     {
-        NavigateToDirectory(args.Data.FullName);
+        NavigateToDirectory(args.Data.FullName!);
         RefreshDirectoryContents();
     }
 
