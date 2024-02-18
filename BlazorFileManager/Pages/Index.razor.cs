@@ -9,6 +9,32 @@ namespace BlazorFileManager.Pages;
 
 public partial class Index
 {
+    private readonly char[] _forbiddenSymbols =
+        { '\\', '/', '|', '?', '*', '\'', ':', '>', '<' };
+
+    private readonly string[] _forbidenDirectoryNames =
+        { "CON", "PRN", "AUX", "NUL", "COM1", "COM2",
+        "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+        "LPT1", "LPT2", "LPT3", "LPT4",
+        "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
+
+    private const string _directoryNameSymbolValidationErrorMessage =
+        "Symbols: < > : \" / \\ | ? * not allowed";
+
+    private const string _directoryNameValidationErrorMessage =
+        "Directory names CON, PRN, AUX, NUL, COM0, COM1, COM2, COM3, " +
+        "COM4, COM5, COM6, COM7, COM8, COM9, LPT0, LPT1, LPT2, LPT3, " +
+        "LPT4, LPT5, LPT6, LPT7, LPT8, LPT9 not allowed";
+
+    private const string _directoryNameLengthValidationErrorMessage =
+        "File name maximum length allowed is 260 symbols.";
+
+    private const string _directoryNameEndingValidationErrorMessage =
+        "File name can not end with \".\" symbol or whitespace.";
+
+    private string DirectoryNameValidationErrorMessage { get; set; } =
+        string.Empty;
+
     private bool _isFolderSelected = false;
     private bool _deleteFolderWithContents;
     private RadzenButton _addNewFolder = new();
@@ -20,6 +46,8 @@ public partial class Index
     private CurrentFolderViewModel? _currentFolder = new();
     private string[] _textTypesForPreview = Array.Empty<string>();
     private string[] _imageTypesForPreview = Array.Empty<string>();
+    private bool popup = false;
+    private ValidationModel DirectoryNameValidationModel = new();
 
     private readonly IList<
         Tuple<FileSystemItemViewModel,
@@ -252,5 +280,47 @@ public partial class Index
     {
         NavigateToDirectory(args.Data.FullName);
         RefreshDirectoryContents();
+    }
+
+    private async Task OnSubmit(ValidationModel model)
+    {
+        Console.WriteLine("Submitted");
+        NewDirectoryName = model.DirectoryName;
+        await RequestCreateNewDirectory();
+    }
+
+    private void OnInvalidSubmit(FormInvalidSubmitEventArgs args)
+    {
+        Console.WriteLine("InValid submitted");
+    }
+
+    private bool ValidateNewEmail(string email)
+    {
+        if (email.Length >= 260)
+        {
+            DirectoryNameValidationErrorMessage =
+                _directoryNameLengthValidationErrorMessage;
+            return false;
+        }
+        else if (email.EndsWith('.') || email.EndsWith(' '))
+        {
+            DirectoryNameValidationErrorMessage =
+                _directoryNameEndingValidationErrorMessage;
+            return false;
+        }
+        else if (email.IndexOfAny(_forbiddenSymbols) != -1)
+        {
+            DirectoryNameValidationErrorMessage =
+                _directoryNameSymbolValidationErrorMessage;
+            return false;
+        }
+        else if (_forbidenDirectoryNames.Contains(email))
+        {
+            DirectoryNameValidationErrorMessage =
+                _directoryNameValidationErrorMessage;
+            return false;
+        }
+
+        return true;
     }
 }

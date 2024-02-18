@@ -32,32 +32,54 @@ else
         }
     </RadzenStack>
     <Popup @ref=_createNewFolderDialog Lazy=false Open="@OnCreateNewDirectory"
-           Style="display:none;position:absolute;height:auto;width:38%;">
-        <RadzenCard>
-            <RadzenTextBox Placeholder="Enter new directory name..." class="w-100 mb-2" aria-label="TextBox with placeholder"
-                           @bind-Value="@NewDirectoryName" />
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
-                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
-                              Click=@CloseCreateDirectoryDialog />
-                <RadzenButton Variant="Variant.Text" Icon="add_circle_outline" Text="Create"
-                              Click=@RequestCreateNewDirectory />
-            </RadzenStack>
-        </RadzenCard>
+           Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
+        <div class="row" style="width:600px;">
+            <div class="col offset-lg-3 bg-white rounded-3 p-3 shadow" style="width:600px;">
+                <RadzenTemplateForm TItem="ValidationModel" Data=@DirectoryNameValidationModel Submit=@OnSubmit InvalidSubmit=@OnInvalidSubmit>
+                    <RadzenFieldset Text="Create New Directory">
+                        <div class="col" style="width:600px;">
+                            <RadzenTextBox style="display: block" Name="Email" @bind-Value=@DirectoryNameValidationModel.DirectoryName class="w-100" Placeholder="Enter new directory name..." />
+                            <RadzenRequiredValidator Component="Email" Text="Email is required" Popup=@popup />
+                            <RadzenCustomValidator Component="Email" Validator="@(() => ValidateNewEmail(DirectoryNameValidationModel.DirectoryName))" Text="@DirectoryNameValidationErrorMessage" Popup=@popup />
+                        </div>
+                        <div class="col mt-1">
+                            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="1">
+                                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
+                                              Click=@CloseCreateDirectoryDialog />
+                                <RadzenButton ButtonType="ButtonType.Submit" Variant="Variant.Text" Icon="add_circle_outline" Text="Create" />
+                            </RadzenStack>
+                        </div>
+                    </RadzenFieldset>
+                </RadzenTemplateForm>
+            </div>
+        </div>
     </Popup>
     <Popup @ref=_deleteFolderConfirmationDialog Lazy=false Open="@OnDeleteDirectory"
            Style="display:none;position:absolute;height:auto;width:600px; margin-top: 10%; left: auto;">
-        <RadzenCard>
-            <h3>Are you sure?</h3>
-            <RadzenIcon Icon="warning" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
-            <p>Recursive deletion (deletes all files and folders within the folder): </p>
-            <RadzenSwitch @bind-Value=@_deleteFolderWithContents />
-
-            <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0">
-                <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
-                              Click=@CloseDeleteDirectoryDialog />
-                <RadzenButton Variant="Variant.Text" Text="Delete" Click=@ConfirmDeleteDirectory />
-            </RadzenStack>
-        </RadzenCard>
+        <div class="row">
+            <div class="col bg-white rounded-3 p-3 shadow">
+                <RadzenFieldset Text="Delete Directory" Style="text-align: center">
+                    <div class="align-items-center my-2">
+                        <span class="h3 pe-3">Are you sure?</span>
+                    </div>
+                    <div class="my-2">
+                        <RadzenSwitch @bind-Value=@_deleteFolderWithContents />
+                        <span class="ms-2">Recursive deletion</span>
+                    </div>
+                    <div class="d-flex my-3 align-items-center justify-content-center">
+                        <span hidden="@(!_deleteFolderWithContents)"> This deletes <b>all</b> files and folders within the folder and can not be undone </span>
+                        <span class="align-items-center ms-1">
+                            <RadzenIcon Icon="warning" Style="align-items: center" IconColor="@Colors.Danger" Visible="@_deleteFolderWithContents" />
+                        </span>
+                    </div>
+                    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="3">
+                        <RadzenButton Variant="Variant.Text" class="rz-text-secondary-color" Text="Cancel"
+                                      Click=@CloseDeleteDirectoryDialog />
+                        <RadzenButton Variant="Variant.Text" Text="Delete" Click=@ConfirmDeleteDirectory />
+                    </RadzenStack>
+                </RadzenFieldset>
+            </div>
+        </div>
     </Popup>
     <RadzenSplitter Orientation="Orientation.Vertical" style="height: 85vh; border: 1px solid rgba(0,0,0,.08);">
         <RadzenSplitterPane Size="100px">
@@ -88,7 +110,7 @@ else
                 <RadzenSplitterPane>
                     <RadzenStack Class="rz-mx-auto rz-my-12 h-100">
                         <RadzenText Visible="@(!string.IsNullOrWhiteSpace(TextFileContents))" Style="white-space: pre-wrap" TextAlign="TextAlign.Left">@TextFileContents</RadzenText>
-                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Class="rz-mx-auto rz-my-12 h-100" >
+                        <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Class="rz-mx-auto rz-my-12 h-100">
                             <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
                             <RadzenIcon Icon="folder" Style="font-size: 10rem;" Visible="@(ViewMessage == "folder")" />
                             <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
