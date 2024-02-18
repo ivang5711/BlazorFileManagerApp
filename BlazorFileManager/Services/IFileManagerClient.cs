@@ -6,6 +6,8 @@ namespace BlazorFileManager.Services
     {
         CurrentFolderViewModel CurrentFolder { get; set; }
         string ParentFolderDisplayName { get; set; }
+        string[] ImageTypesForPreview { get; set; }
+        string[] TextTypesForPreview { get; set; }
 
         void AddAllDrivesToDisplayModel();
 

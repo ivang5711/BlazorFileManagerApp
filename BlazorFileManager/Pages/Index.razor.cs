@@ -14,8 +14,8 @@ public partial class Index
     private bool _isFolderSelected = false;
     private bool _deleteFolderWithContents;
     private string _errorMessage = string.Empty;
-    private string[] _imageTypesForPreview = { ".jpg", ".bmp", ".png" };
-    private string[] _textTypesForPreview = { ".txt" };
+    private string[] _imageTypesForPreview = Array.Empty<string>();
+    private string[] _textTypesForPreview = Array.Empty<string>();
     private RadzenButton _addNewFolder = new();
     private RadzenButton _deleteFolder = new();
     private Popup _createNewFolderDialog = new();
@@ -33,6 +33,8 @@ public partial class Index
 
     protected override void OnInitialized()
     {
+        _imageTypesForPreview = _fileManagerClient.ImageTypesForPreview;
+        _textTypesForPreview = _fileManagerClient.TextTypesForPreview;
         InitializeRootDirectory();
         RefreshDirectoryContents();
     }

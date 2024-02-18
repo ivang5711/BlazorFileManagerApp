@@ -14,6 +14,9 @@ public class FileManagerClient : IFileManagerClient
     public string ParentFolderDisplayName { get; set; } = string.Empty;
     public CurrentFolderViewModel CurrentFolder { get; set; } = new();
 
+    public string[] ImageTypesForPreview { get; set; } = Array.Empty<string>();
+    public string[] TextTypesForPreview { get; set; } = Array.Empty<string>();
+
     public FileManagerClient
         (IFileManager fileManager, IConfiguration configuration)
     {
@@ -28,6 +31,10 @@ public class FileManagerClient : IFileManagerClient
             .GetValue<string>("DateFormat") ?? string.Empty;
         ParentFolderDisplayName = _configuration
             .GetValue<string>("ParentFolderDisplayName") ?? string.Empty;
+        ImageTypesForPreview = _configuration
+            .GetSection("SupportedImageTypes").Get<string[]>();
+        TextTypesForPreview = _configuration
+            .GetSection("SupportedTextFileTypes").Get<string[]>();
     }
 
     public void CreateNewFolder(string newDirectoryName)
