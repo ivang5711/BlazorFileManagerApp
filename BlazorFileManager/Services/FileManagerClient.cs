@@ -9,13 +9,25 @@ namespace BlazorFileManager.Services;
 public class FileManagerClient : IFileManagerClient
 {
     private readonly IFileManager _fileManager;
-    public string DateFormat { get; set; } = "yyyy'-'MM'-'dd' 'HH':'mm':'ss";
-    public string ParentFolderDisplayName { get; set; } = "..";
+    private readonly IConfiguration _configuration;
+    public string DateFormat { get; set; } = string.Empty;
+    public string ParentFolderDisplayName { get; set; } = string.Empty;
     public CurrentFolderViewModel CurrentFolder { get; set; } = new();
 
-    public FileManagerClient(IFileManager fileManager)
+    public FileManagerClient
+        (IFileManager fileManager, IConfiguration configuration)
     {
         _fileManager = fileManager;
+        _configuration = configuration;
+        SetUpConfiguration();
+    }
+
+    private void SetUpConfiguration()
+    {
+        DateFormat = _configuration
+            .GetValue<string>("DateFormat") ?? string.Empty;
+        ParentFolderDisplayName = _configuration
+            .GetValue<string>("ParentFolderDisplayName") ?? string.Empty;
     }
 
     public void CreateNewFolder(string newDirectoryName)
@@ -316,5 +328,15 @@ public class FileManagerClient : IFileManagerClient
             Extension = string.Empty,
             Size = string.Empty,
         };
+    }
+
+    public string GetImageDataForPreview(string path)
+    {
+        return _fileManager.GetImageAsString(path);
+    }
+
+    public string GetTextFileContentsForPreview(string path)
+    {
+        return _fileManager.GetTextFileAsString(path);
     }
 }

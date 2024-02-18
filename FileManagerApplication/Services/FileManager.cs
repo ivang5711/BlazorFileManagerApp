@@ -277,5 +277,17 @@ namespace FileManagerApplication.Services
                 throw new InnerErrorException(errorMessage, ex);
             }
         }
+
+        public string GetImageAsString(string path)
+        {
+            string[] text = System.IO.File.ReadAllLines(path, System.Text.Encoding.UTF8);
+            return string.Join("\n", text);
+        }
+
+        public string GetTextFileAsString(string path)
+        {
+            byte[] imageArray = File.ReadAllBytes(path);
+            return Convert.ToBase64String(imageArray);
+        }
     }
 }

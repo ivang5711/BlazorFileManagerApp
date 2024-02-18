@@ -1,14 +1,9 @@
 ﻿@page "/"
 
-@using Radzen
-@using Radzen.Blazor
 @using Radzen.Blazor.Rendering
 @using BlazorFileManager.Services
-@using Humanizer
-@using ByteSizeLib
-@inject IJSRuntime JSRuntime
-@inject FileManagerDomain.Interfaces.IFileManager _fileManager
 @inject IFileManagerClient _fileManagerClient
+@inject IJSRuntime JSRuntime
 @inject DialogService DialogService
 
 <PageTitle>Blazor File Manager</PageTitle>
@@ -97,7 +92,7 @@ else
                             <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
                             <RadzenIcon Icon="folder" Style="font-size: 10rem;" Visible="@(ViewMessage == "folder")" />
                             <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
-                            <RadzenImage Path="@($"data:image/jpeg;base64,{base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="base64 image" Visible="@(base64Image != string.Empty)" />
+                            <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="No Preview for this item" Visible="@(_base64Image != string.Empty)" />
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenSplitterPane>

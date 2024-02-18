@@ -16,5 +16,9 @@ namespace FileManagerDomain.Interfaces
         IEnumerable<FileInformation> GetAllInnerFilesInfo(string path);
 
         DirectoryInformation GetDirectoryInformation(string path);
+
+        string GetImageAsString(string path);
+
+        string GetTextFileAsString(string path);
     }
 }
