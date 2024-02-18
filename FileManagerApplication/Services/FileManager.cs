@@ -278,13 +278,13 @@ namespace FileManagerApplication.Services
             }
         }
 
-        public string GetImageAsString(string path)
+        public string GetTextFileAsString(string path)
         {
             string[] text = System.IO.File.ReadAllLines(path, System.Text.Encoding.UTF8);
             return string.Join("\n", text);
         }
 
-        public string GetTextFileAsString(string path)
+        public string GetImageAsString(string path)
         {
             byte[] imageArray = File.ReadAllBytes(path);
             return Convert.ToBase64String(imageArray);

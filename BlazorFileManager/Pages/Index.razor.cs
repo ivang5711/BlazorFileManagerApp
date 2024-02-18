@@ -259,12 +259,12 @@ public partial class Index
         if (_textTypesForPreview.Contains(extension.ToLowerInvariant()))
         {
             ViewMessage = string.Empty;
-            TextFileContents = _fileManagerClient.GetImageDataForPreview(path);
+            TextFileContents = _fileManagerClient.GetTextFileContentsForPreview(path);
         }
         else if (_imageTypesForPreview.Contains(extension.ToLowerInvariant()))
         {
             ViewMessage = string.Empty;
-            _base64Image = _fileManagerClient.GetTextFileContentsForPreview(path);
+            _base64Image = _fileManagerClient.GetImageDataForPreview(path);
         }
     }
 
