@@ -107,17 +107,17 @@ else
                                     CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick"
                                     CellRender="OnCellRender">
                         <Columns>
-                            <RadzenDataGridColumn TItem="FileSystemItemViewModel" Property="Name" Title="Name">
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel" Property="Name" Title="Name" Width="60%" MinWidth="60%">
                                 <Template Context="item">
                                     @item.Name
                                 </Template>
                             </RadzenDataGridColumn>
                             <RadzenDataGridColumn TItem="FileSystemItemViewModel"
-                                                  Property="Extension" Title="Ext" MinWidth="10%" Width="10%" />
+                                                  Property="Extension" Title="Ext" MinWidth="20%" />
                             <RadzenDataGridColumn TItem="FileSystemItemViewModel"
-                                                  Property="Size" Title="Size" MinWidth="10%" Width="10%" />
+                                                  Property="Size" Title="Size" MinWidth="20%" />
                             <RadzenDataGridColumn TItem="FileSystemItemViewModel"
-                                                  Property="ModifiedDate" Title="Date" Width="20%" />
+                                                  Property="ModifiedDate" Title="Date" MinWidth="20%" />
                         </Columns>
                     </RadzenDataGrid>
                 </RadzenSplitterPane>
