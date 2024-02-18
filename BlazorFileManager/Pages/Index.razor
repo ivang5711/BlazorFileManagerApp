@@ -22,7 +22,7 @@ else
         <RadzenButton Text="Delete Folder" @ref=_deleteFolder
                       Click="@(args => _deleteFolderConfirmationDialog.ToggleAsync(_deleteFolder.Element))"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary"
-                      Disabled="@(!_isFolderSelected || _currentFolder.IsRoot || _selectedCellData.Any(x => x.Item1.Name == ".."))" />
+                      Disabled="@(!_isFolderSelected || _currentFolder.IsRoot || _selectedCellData.Any(x => x.Item1.Name == _fileManagerClient.ParentFolderDisplayName))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
         {
             <RadzenAlert Variant="Variant.Flat" AlertStyle="AlertStyle.Warning" Style="width: auto;"
@@ -87,12 +87,12 @@ else
                 </RadzenSplitterPane>
                 <RadzenSplitterPane>
                     <RadzenStack Class="rz-mx-auto rz-my-12 h-100">
-                        <RadzenText Visible="@(TextFileContents != string.Empty)" Style="white-space: pre-wrap" TextAlign="TextAlign.Left">@TextFileContents</RadzenText>
+                        <RadzenText Visible="@(!string.IsNullOrWhiteSpace(TextFileContents))" Style="white-space: pre-wrap" TextAlign="TextAlign.Left">@TextFileContents</RadzenText>
                         <RadzenStack AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Class="rz-mx-auto rz-my-12 h-100" >
                             <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
                             <RadzenIcon Icon="folder" Style="font-size: 10rem;" Visible="@(ViewMessage == "folder")" />
                             <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
-                            <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="No Preview for this item" Visible="@(_base64Image != string.Empty)" />
+                            <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")" Style="max-width: 100%; height: auto;" AlternateText="No Preview for this item" Visible="@(!string.IsNullOrWhiteSpace(_base64Image))" />
                         </RadzenStack>
                     </RadzenStack>
                 </RadzenSplitterPane>
