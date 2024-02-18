@@ -22,8 +22,8 @@ else
         <RadzenButton Text="Delete Folder" @ref=_deleteFolder
                       Click="@(args => _deleteFolderConfirmationDialog.ToggleAsync(_deleteFolder.Element))"
                       Icon="delete_forever" ButtonStyle="ButtonStyle.Primary"
-                      Disabled="@(!_isFolderSelected || 
-                                  _currentFolder.IsRoot || 
+                      Disabled="@(!_isFolderSelected ||
+                                  _currentFolder.IsRoot ||
                                   _selectedCellData.Any(x => x.Item1.Name == _fileManagerClient.ParentFolderDisplayName) ||
                       !string.IsNullOrEmpty(_selectedCellData[0].Item1.Extension))" />
         @if (!string.IsNullOrWhiteSpace(_errorMessage))
@@ -107,7 +107,8 @@ else
                                     CellClick="@OnCellClick" CellDoubleClick="OnCellDoubleClick"
                                     CellRender="OnCellRender">
                         <Columns>
-                            <RadzenDataGridColumn TItem="FileSystemItemViewModel" Property="Name" Title="Name" Width="60%" MinWidth="60%">
+                            <RadzenDataGridColumn TItem="FileSystemItemViewModel"
+                                                  Property="Name" Title="Name" Width="60%" MinWidth="60%">
                                 <Template Context="item">
                                     @item.Name
                                 </Template>
@@ -132,8 +133,8 @@ else
                                      JustifyContent="JustifyContent.Center"
                                      Class="rz-mx-auto rz-my-12 h-100">
                             <RadzenIcon Icon="storage" Style="font-size: 10rem;" Visible="@(ViewMessage == "disk")" />
-                            <RadzenIcon Icon="folder" Style="font-size: 10rem;" 
-                                        Visible="@(ViewMessage == "folder" 
+                            <RadzenIcon Icon="folder" Style="font-size: 10rem;"
+                                        Visible="@(ViewMessage == "folder"
                                                    && _selectedCellData[0].Item1.Name != _fileManagerClient.ParentFolderDisplayName)" />
                             <RadzenIcon Icon="description" Style="font-size: 10rem;" Visible="@(ViewMessage == "file")" />
                             <RadzenImage Path="@($"data:image/jpeg;base64,{_base64Image}")"
